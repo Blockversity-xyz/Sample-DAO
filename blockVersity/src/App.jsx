@@ -1,13 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import {
   logIn,
   currentUser,
-  unauthenticate,
+  logOut,
 } from "./Flow/actions";
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    currentUser().subscribe(setUser);
+  }, []);
 
   return (
     <div className="App">
@@ -20,8 +25,14 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      <h1>And now it works!</h1>
+      <h1>User's Address: {user?.addr}</h1>
       <div className="card">
+        <button onClick={() => logIn()}>
+          Connect
+        </button>
+        <button onClick={() => logOut()}>
+          Disconnect
+        </button>
       </div>
     </div>
   )
