@@ -1,6 +1,13 @@
 import BlockVersityDAO from "../../contracts/DAO/DaoTest.cdc"
 
-transaction(title: String, description: String, options: [String], startAt: UFix64, endAt: UFix64, minHoldedBVTAmount: UFix64?) {
+transaction(
+  title: String,
+  description: String,
+  options: [String],
+  startAt: UFix64,
+  endAt: UFix64,
+  minHoldedBVTAmount: UFix64?
+  ) {
   let proposer: &BlockVersityDAO.ProposerProxy?
   let minHoldedBVTAmount:UFix64?
 
@@ -23,6 +30,6 @@ transaction(title: String, description: String, options: [String], startAt: UFix
       _startAt: startAt,
       _endAt: endAt,
       _minHoldedBVTAmount: self.minHoldedBVTAmount
-    )
+    ) ?? panic("No proposer Resource deposited yet")
   }
 }

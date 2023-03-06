@@ -31,7 +31,15 @@ pub contract BlockVersityDAO {
 
         // Function that creates new proposals.
         //
-      pub fun addProposal(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
+      pub fun addProposal(
+        title: String,
+        description: String,
+        options: [String],
+        startAt: UFix64?,
+        endAt: UFix64?,
+        minHoldedBVTAmount: UFix64?
+        ) {
+
         BlockVersityDAO.Proposals.append(Proposal(
          proposer: self.owner!.address,
          title: title,
@@ -40,15 +48,24 @@ pub contract BlockVersityDAO {
          startAt: startAt,
          endAt: endAt,
          minHoldedBVTAmount: minHoldedBVTAmount
-       ))
-       BlockVersityDAO.votedRecords.append({})
-       BlockVersityDAO.totalProposals = BlockVersityDAO.totalProposals + 1
-     }
+        ))
 
-      pub fun updateProposal(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
-       pre {
-         BlockVersityDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
-       }
+        BlockVersityDAO.votedRecords.append({})
+        BlockVersityDAO.totalProposals = BlockVersityDAO.totalProposals + 1
+      }
+
+      pub fun updateProposal(
+        id: Int,
+        title: String?,
+        description: String?,
+        startAt: UFix64?,
+        endAt: UFix64?,
+        voided: Bool?
+        ) {
+
+        pre {
+          BlockVersityDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
+        }
 
         BlockVersityDAO.Proposals[id].update(
           title: title,
@@ -56,8 +73,8 @@ pub contract BlockVersityDAO {
           startAt: startAt,
           endAt: endAt,
           voided: voided
-          )
-       }
+        )
+      }
      }
 
     pub resource interface ProposerProxyPublic {
@@ -69,7 +86,6 @@ pub contract BlockVersityDAO {
     // The resource that this capability represents can be deleted by the admin
     // in order to unilaterally revoke proposer capability if needed.
     pub resource ProposerProxy: ProposerProxyPublic {
-
         // access(self) so nobody else can copy the capability and use it.
         access(self) var ProposerCapability: Capability<&Proposer>?
         // Anyone can call this, but only the admin can create Proposer capabilities,
@@ -78,16 +94,48 @@ pub contract BlockVersityDAO {
             self.ProposerCapability = capability
         }
 
-        pub fun addProposal(_title: String, _description: String, _options: [String], _startAt: UFix64?, _endAt: UFix64?, _minHoldedBVTAmount: UFix64?): Void? {
+        pub fun addProposal(
+          _title: String,
+          _description: String,
+          _options: [String],
+          _startAt: UFix64?,
+          _endAt: UFix64?,
+          _minHoldedBVTAmount: UFix64?
+          ): Void? {
+
             return self.ProposerCapability
             ?.borrow()!
-            ?.addProposal(title: _title, description: _description, options: _options, startAt: _startAt, endAt: _endAt, minHoldedBVTAmount: _minHoldedBVTAmount)
+            ?.addProposal(
+              title: _title,
+              description: _description,
+              options: _options,
+              startAt: _startAt,
+              endAt: _endAt,
+              minHoldedBVTAmount: _minHoldedBVTAmount
+              )
         }
-/*         pub fun updateProposal(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
-          return <- self.ProposerCapability!
+
+        pub fun updateProposal(
+          id: Int,
+          title: String?,
+          description: String?,
+          startAt: UFix64?,
+          endAt: UFix64?,
+          voided: Bool?
+          ) {
+
+          return self.ProposerCapability!
           .borrow()!
-          .updateProposal(id: Int, title: String, description: String, startAt: UFix64, endAt: UFix64, voided: Bool)
-        } */
+          .updateProposal(
+            id: id,
+            title: title,
+            description: description,
+            startAt: startAt,
+            endAt: endAt,
+            voided: voided
+            )
+        }
+
         init () {
           self.ProposerCapability = nil
         }

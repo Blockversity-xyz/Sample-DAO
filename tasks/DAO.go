@@ -49,7 +49,7 @@ func main() {
 	color.Green("Pass")
 
 	// Proposer creates a Proposal
-	color.Red("Account should be able to create a new Proposal")
+	color.Red("Bob should be able to create a new Proposal")
 	o.Tx("DAO/createProposal",
 		WithSigner("bob"),
 		WithArg("title", "How much $BVT tokens grant should the BlockVersity ecosystem fund allocate for war in Ukraine?"),
