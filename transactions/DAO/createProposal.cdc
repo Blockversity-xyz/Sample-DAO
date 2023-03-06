@@ -1,4 +1,4 @@
-import BlockVersityDAO from "../../contracts/DAO/DaoTest.cdc"
+import BlockVersityDAO from "../../contracts/DAO/BlockVersityDAO.cdc"
 
 transaction(
   title: String,

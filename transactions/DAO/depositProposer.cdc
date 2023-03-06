@@ -10,7 +10,7 @@
 // This transaction will fail if the Proposer account does not have
 // an BlockVersityDAO.ProposerProxy resource. Use the setup_BlockVersityDAO_Proposer.cdc transaction to
 // create a Proposer proxy in the Proposer account.
-import BlockVersityDAO from "../../contracts/DAO/DaoTest.cdc"
+import BlockVersityDAO from "../../contracts/DAO/BlockVersityDAO.cdc"
 
 transaction(proposerAddress: Address) {
 

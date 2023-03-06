@@ -8,18 +8,23 @@ pub contract BlockVersityDAO {
   access(contract) var totalProposals: Int
 
   pub let AdminStoragePath: StoragePath;
+  pub let ProposerStoragePath: StoragePath;
+  // The storage Path for Proposers' ProposerProxy
+  pub let ProposerProxyStoragePath: StoragePath
+  // The public path for Proposers' ProposerProxy capability
+  pub let ProposerProxyPublicPath: PublicPath
+  // Admin resourse holder can create Proposers
   pub let VoterStoragePath: StoragePath;
   pub let VoterPublicPath: PublicPath;
   pub let VoterPath: PrivatePath;
 
-  // Admin resourse holder can create Proposers
   pub resource Admin {
     pub fun createProposer(): @BlockVersityDAO.Proposer {
       return <- create Proposer()
     }
   }
 
-    // Proposer
+  // Proposer
     //
     // Resource object that can create new proposals.
     // The admin stores this and passes it to the Proposer account as a capability wrapper resource.
@@ -28,7 +33,15 @@ pub contract BlockVersityDAO {
 
         // Function that creates new proposals.
         //
-      pub fun addProposal(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
+      pub fun addProposal(
+        title: String,
+        description: String,
+        options: [String],
+        startAt: UFix64?,
+        endAt: UFix64?,
+        minHoldedBVTAmount: UFix64?
+        ) {
+
         BlockVersityDAO.Proposals.append(Proposal(
          proposer: self.owner!.address,
          title: title,
@@ -37,15 +50,24 @@ pub contract BlockVersityDAO {
          startAt: startAt,
          endAt: endAt,
          minHoldedBVTAmount: minHoldedBVTAmount
-       ))
-       BlockVersityDAO.votedRecords.append({})
-       BlockVersityDAO.totalProposals = BlockVersityDAO.totalProposals + 1
-     }
+        ))
 
-      pub fun updateProposal(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
-       pre {
-         BlockVersityDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
-       }
+        BlockVersityDAO.votedRecords.append({})
+        BlockVersityDAO.totalProposals = BlockVersityDAO.totalProposals + 1
+      }
+
+      pub fun updateProposal(
+        id: Int,
+        title: String?,
+        description: String?,
+        startAt: UFix64?,
+        endAt: UFix64?,
+        voided: Bool?
+        ) {
+
+        pre {
+          BlockVersityDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
+        }
 
         BlockVersityDAO.Proposals[id].update(
           title: title,
@@ -53,49 +75,74 @@ pub contract BlockVersityDAO {
           startAt: startAt,
           endAt: endAt,
           voided: voided
-          )
-       }
+        )
+      }
      }
 
     pub resource interface ProposerProxyPublic {
         pub fun setProposerCapability(capability: Capability<&Proposer>)
     }
-
     // ProposerProxy
     //
     // Resource object holding a capability that can be used to create new proposals.
     // The resource that this capability represents can be deleted by the admin
     // in order to unilaterally revoke proposer capability if needed.
-
     pub resource ProposerProxy: ProposerProxyPublic {
-
         // access(self) so nobody else can copy the capability and use it.
-        access(self) var ProposerCapability: Capability<&Proposer>
-
+        access(self) var ProposerCapability: Capability<&Proposer>?
         // Anyone can call this, but only the admin can create Proposer capabilities,
         // so the type system constrains this to being called by the admin.
         pub fun setProposerCapability(capability: Capability<&Proposer>) {
             self.ProposerCapability = capability
         }
 
-        pub fun addProposal(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
-            return <- self.ProposerCapability
-            .borrow()
-            .addProposal(title: String, description: String, options: [String], startAt: UFix64, endAt: UFix64, minHoldedBVTAmount: UFix64)
+        pub fun addProposal(
+          _title: String,
+          _description: String,
+          _options: [String],
+          _startAt: UFix64?,
+          _endAt: UFix64?,
+          _minHoldedBVTAmount: UFix64?
+          ): Void? {
+
+            return self.ProposerCapability
+            ?.borrow()!
+            ?.addProposal(
+              title: _title,
+              description: _description,
+              options: _options,
+              startAt: _startAt,
+              endAt: _endAt,
+              minHoldedBVTAmount: _minHoldedBVTAmount
+              )
         }
 
-        pub fun updateProposal(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
-          return <- self.ProposerCapability!
+        pub fun updateProposal(
+          id: Int,
+          title: String?,
+          description: String?,
+          startAt: UFix64?,
+          endAt: UFix64?,
+          voided: Bool?
+          ) {
+
+          return self.ProposerCapability!
           .borrow()!
-          .updateProposal(id: Int, title: String, description: String, startAt: UFix64, endAt: UFix64, voided: Bool)
+          .updateProposal(
+            id: id,
+            title: title,
+            description: description,
+            startAt: startAt,
+            endAt: endAt,
+            voided: voided
+            )
         }
 
-        init() {
-            self.ProposerCapability = nil?
+        init () {
+          self.ProposerCapability = nil
         }
 
     }
-
     // createProposerProxy
     //
     // Function that creates a ProposerProxy.
@@ -136,16 +183,6 @@ pub contract BlockVersityDAO {
 
     init() {
       self.records = {}
-    }
-  }
-
-  pub struct VoteRecord {
-    pub let address: Address
-    pub let optionIndex: Int
-
-    init(address: Address, optionIndex: Int) {
-      self.address = address
-      self.optionIndex = optionIndex
     }
   }
 
@@ -229,7 +266,12 @@ pub contract BlockVersityDAO {
 
     // return if count ended
     pub fun count(size: Int): [UInt64] {
-
+      if self.isEnded() == false {
+        return self.votesCountActual
+      }
+      if self.sealed {
+        return self.votesCountActual
+      }
       // Fetch the keys of everyone who has voted on this proposal
       let votedList = BlockVersityDAO.votedRecords[self.id].keys
       // Count from the last time you counted
@@ -259,27 +301,6 @@ pub contract BlockVersityDAO {
 
     pub fun isStarted(): Bool {
       return getCurrentBlock().timestamp >= self.startAt
-    }
-
-    pub fun getVotes(page: Int, pageSize: Int?): [VoteRecord] {
-      var records: [VoteRecord] = []
-      let size = pageSize != nil ? pageSize! : 100
-      let addresses = BlockVersityDAO.votedRecords[self.id].keys
-      var pageStart = (page - 1) * size
-      var pageEnd = pageStart + size
-
-      if pageEnd > addresses.length {
-        pageEnd = addresses.length
-      }
-
-      while pageStart < pageEnd {
-        let address = addresses[pageStart]
-        let optionIndex = BlockVersityDAO.votedRecords[self.id][address]!
-        records.append(VoteRecord(address: address, optionIndex: optionIndex))
-        pageStart = pageStart + 1
-      }
-
-      return records
     }
 
     pub fun getTotalVoted(): Int {
@@ -322,10 +343,15 @@ pub contract BlockVersityDAO {
     self.totalProposals = 0
 
     self.AdminStoragePath = /storage/BlockVersityDAOAdmin
+    self.ProposerStoragePath = /storage/BlockVersityDAOProposer
+    self.ProposerProxyPublicPath = /public/BlockVersityDAOProposerProxy
+    self.ProposerProxyStoragePath = /storage/BlockVersityDAOProposerProxy
     self.VoterStoragePath = /storage/BlockVersityDAOVoter
     self.VoterPublicPath = /public/BlockVersityDAOVoter
     self.VoterPath = /private/BlockVersityDAOVoter
+
     self.account.save(<-create Admin(), to: self.AdminStoragePath)
+    self.account.save(<-create Proposer(), to: self.ProposerStoragePath)
     self.account.save(<-create Voter(), to: self.VoterStoragePath)
     self.account.link<&BlockVersityDAO.Voter>(
             self.VoterPublicPath,

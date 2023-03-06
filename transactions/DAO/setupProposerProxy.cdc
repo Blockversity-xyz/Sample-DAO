@@ -4,7 +4,7 @@
 // After running this transaction, the BlockVersityDAO administrator
 // must run deposit_BlockVersityDAO_Proposer.cdc to deposit a Proposer resource
 // inside the Proposer proxy.
-import BlockVersityDAO from "../../contracts/DAO/DaoTest.cdc"
+import BlockVersityDAO from "../../contracts/DAO/BlockVersityDAO.cdc"
 
 transaction {
 

@@ -115,7 +115,7 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"NonFungibleToken",
-				"DaoTest"
+				"BlockVersityDAO"
 			],
 			"emulator-alice": []
 		},
