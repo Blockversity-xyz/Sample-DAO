@@ -1,9 +1,9 @@
 // This transaction is a template for a transaction to allow
 // anyone to add a Vault resource to their account so that
 // they can use the BlockVersityToken
-import FungibleToken from "../../../contracts/utility/FungibleToken.cdc"
-import BlockVersityToken from "../../../contracts/BlockVersityToken.cdc"
-import MetadataViews from "../../../contracts/utility/MetadataViews.cdc"
+import FungibleToken from "../../contracts/utility/FungibleToken.cdc"
+import BlockVersityToken from "../../contracts/BlockVersityToken.cdc"
+import MetadataViews from "../../contracts/utility/MetadataViews.cdc"
 
 transaction () {
 

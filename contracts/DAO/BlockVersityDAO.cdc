@@ -3,20 +3,14 @@ import FungibleToken from "../utility/FungibleToken.cdc"
 import BlockVersityToken from "../BlockVersityToken.cdc"
 
 pub contract BlockVersityDAO {
-  access(contract) var topics: [Topic]
+  access(contract) var Proposals: [Proposal]
   access(contract) var votedRecords: [{ Address: Int }]
-  access(contract) var totalTopics: Int
+  access(contract) var totalProposals: Int
 
   pub let AdminStoragePath: StoragePath;
   pub let VoterStoragePath: StoragePath;
   pub let VoterPublicPath: PublicPath;
   pub let VoterPath: PrivatePath;
-
-  pub enum CountStatus: UInt8 {
-    pub case invalid
-    pub case success
-    pub case finished
-  }
 
   // Admin resourse holder can create Proposers
   pub resource Admin {
@@ -25,58 +19,115 @@ pub contract BlockVersityDAO {
     }
   }
 
-  // Proposer resource holder can propose new topics
-  pub resource Proposer {
-    pub fun addTopic(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
-      BlockVersityDAO.topics.append(Topic(
-        proposer: self.owner!.address,
-        title: title,
-        description: description,
-        options: options,
-        startAt: startAt,
-        endAt: endAt,
-        minHoldedBVTAmount: minHoldedBVTAmount
-      ))
-      BlockVersityDAO.votedRecords.append({})
-      BlockVersityDAO.totalTopics = BlockVersityDAO.totalTopics + 1
+    // Proposer
+    //
+    // Resource object that can create new proposals.
+    // The admin stores this and passes it to the Proposer account as a capability wrapper resource.
+    //
+    pub resource Proposer {
+
+        // Function that creates new proposals.
+        //
+      pub fun addProposal(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
+        BlockVersityDAO.Proposals.append(Proposal(
+         proposer: self.owner!.address,
+         title: title,
+         description: description,
+         options: options,
+         startAt: startAt,
+         endAt: endAt,
+         minHoldedBVTAmount: minHoldedBVTAmount
+       ))
+       BlockVersityDAO.votedRecords.append({})
+       BlockVersityDAO.totalProposals = BlockVersityDAO.totalProposals + 1
+     }
+
+      pub fun updateProposal(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
+       pre {
+         BlockVersityDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
+       }
+
+        BlockVersityDAO.Proposals[id].update(
+          title: title,
+          description: description,
+          startAt: startAt,
+          endAt: endAt,
+          voided: voided
+          )
+       }
+     }
+
+    pub resource interface ProposerProxyPublic {
+        pub fun setProposerCapability(capability: Capability<&Proposer>)
     }
 
-    pub fun updateTopic(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
-      pre {
-        BlockVersityDAO.topics[id].proposer == self.owner!.address: "Only original proposer can update"
-      }
+    // ProposerProxy
+    //
+    // Resource object holding a capability that can be used to create new proposals.
+    // The resource that this capability represents can be deleted by the admin
+    // in order to unilaterally revoke proposer capability if needed.
 
-      BlockVersityDAO.topics[id].update(
-        title: title,
-        description: description,
-        startAt: startAt,
-        endAt: endAt,
-        voided: voided
-      )
+    pub resource ProposerProxy: ProposerProxyPublic {
+
+        // access(self) so nobody else can copy the capability and use it.
+        access(self) var ProposerCapability: Capability<&Proposer>
+
+        // Anyone can call this, but only the admin can create Proposer capabilities,
+        // so the type system constrains this to being called by the admin.
+        pub fun setProposerCapability(capability: Capability<&Proposer>) {
+            self.ProposerCapability = capability
+        }
+
+        pub fun addProposal(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
+            return <- self.ProposerCapability
+            .borrow()
+            .addProposal(title: String, description: String, options: [String], startAt: UFix64, endAt: UFix64, minHoldedBVTAmount: UFix64)
+        }
+
+        pub fun updateProposal(id: Int, title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
+          return <- self.ProposerCapability!
+          .borrow()!
+          .updateProposal(id: Int, title: String, description: String, startAt: UFix64, endAt: UFix64, voided: Bool)
+        }
+
+        init() {
+            self.ProposerCapability = nil?
+        }
+
     }
-  }
+
+    // createProposerProxy
+    //
+    // Function that creates a ProposerProxy.
+    // Anyone can call this, but the ProposerProxy cannot
+    // create proposals without a Proposer capability,
+    // and only the admin can provide that.
+    //
+    pub fun createProposerProxy(): @ProposerProxy {
+        return <- create ProposerProxy()
+    }
 
   pub resource interface VoterPublic {
-    // voted topic id <-> options index mapping
-    pub fun getVotedOption(topicId: UInt64): Int?
+    // voted Proposal id <-> options index mapping
+    pub fun getVotedOption(ProposalId: UInt64): Int?
     pub fun getVotedOptions(): { UInt64: Int }
   }
 
-  // Voter resource holder can vote on topics
+  // Voter resource holder can vote on Proposals
   pub resource Voter: VoterPublic {
     access(self) var records: { UInt64: Int }
 
-    pub fun vote(topicId: UInt64, optionIndex: Int) {
+    pub fun vote(ProposalId: UInt64, optionIndex: Int) {
       pre {
-        self.records[topicId] == nil: "Already voted"
-        optionIndex < BlockVersityDAO.topics[topicId].options.length: "Invalid option"
+        self.records[ProposalId] == nil: "Already voted"
+        optionIndex < BlockVersityDAO.Proposals[ProposalId].options.length: "Invalid option"
       }
-      BlockVersityDAO.topics[topicId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
-      self.records[topicId] = optionIndex
+      BlockVersityDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
+      self.records[ProposalId] = optionIndex
     };
 
-    pub fun getVotedOption(topicId: UInt64): Int? {
-      return self.records[topicId]
+    pub fun getVotedOption(ProposalId: UInt64): Int? {
+      return self.records[ProposalId]
     }
 
     pub fun getVotedOptions(): { UInt64: Int } {
@@ -98,7 +149,7 @@ pub contract BlockVersityDAO {
     }
   }
 
-  pub struct Topic {
+  pub struct Proposal {
     pub let id: Int;
     pub let proposer: Address
     pub var title: String
@@ -132,7 +183,7 @@ pub contract BlockVersityDAO {
         self.votesCountActual.append(0)
       }
 
-      self.id = BlockVersityDAO.totalTopics
+      self.id = BlockVersityDAO.totalProposals
 
       self.sealed = false
       self.countIndex = 0
@@ -178,12 +229,6 @@ pub contract BlockVersityDAO {
 
     // return if count ended
     pub fun count(size: Int): [UInt64] {
-/*       if self.isEnded() == false {
-        return CountStatus.invalid
-      }
-      if self.sealed {
-        return CountStatus.finished
-      } */
 
       // Fetch the keys of everyone who has voted on this proposal
       let votedList = BlockVersityDAO.votedRecords[self.id].keys
@@ -251,20 +296,20 @@ pub contract BlockVersityDAO {
     return vaultRef.balance
   }
 
-  pub fun getTopics(): [Topic] {
-    return self.topics
+  pub fun getProposals(): [Proposal] {
+    return self.Proposals
   }
 
-  pub fun getTopicsLength(): Int {
-    return self.topics.length
+  pub fun getProposalsLength(): Int {
+    return self.Proposals.length
   }
 
-  pub fun getTopic(id: UInt64): Topic {
-    return self.topics[id]
+  pub fun getProposal(id: UInt64): Proposal {
+    return self.Proposals[id]
   }
 
-  pub fun count(topicId: UInt64, maxSize: Int): [UInt64] {
-    return self.topics[topicId].count(size: maxSize)
+  pub fun count(ProposalId: UInt64, maxSize: Int): [UInt64] {
+    return self.Proposals[ProposalId].count(size: maxSize)
   }
 
   pub fun initVoter(): @BlockVersityDAO.Voter {
@@ -272,9 +317,9 @@ pub contract BlockVersityDAO {
   }
 
   init () {
-    self.topics = []
+    self.Proposals = []
     self.votedRecords = []
-    self.totalTopics = 0
+    self.totalProposals = 0
 
     self.AdminStoragePath = /storage/BlockVersityDAOAdmin
     self.VoterStoragePath = /storage/BlockVersityDAOVoter

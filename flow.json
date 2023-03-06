@@ -17,6 +17,7 @@
 		},
 		"BlockVersityTokenPublicSale": "./contracts/sales/BlockVersityTokenPublicSale.cdc",
 		"BlockVersityDAO": "./contracts/DAO/BlockVersityDAO.cdc",
+		"DaoTest": "./contracts/DAO/DaoTest.cdc",
 		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
 		"exampleToken": "./contracts/exampleToken.cdc",
 		"FungibleToken": {
@@ -114,7 +115,7 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"NonFungibleToken",
-				"BlockVersityDAO"
+				"DaoTest"
 			],
 			"emulator-alice": []
 		},
