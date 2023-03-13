@@ -1,8 +1,8 @@
 import NonFungibleToken from "../utility/NonFungibleToken.cdc"
 import FungibleToken from "../utility/FungibleToken.cdc"
-import BlockVersityToken from "../BlockVersityToken.cdc"
+import GovernanceToken from "../GovernanceToken.cdc"
 
-pub contract BlockVersityDAO {
+pub contract ExampleDAO {
   access(contract) var Proposals: [Proposal]
   access(contract) var votedRecords: [{ Address: Int }]
   access(contract) var totalProposals: Int
@@ -19,7 +19,7 @@ pub contract BlockVersityDAO {
   pub let VoterPath: PrivatePath;
 
   pub resource Admin {
-    pub fun createProposer(): @BlockVersityDAO.Proposer {
+    pub fun createProposer(): @ExampleDAO.Proposer {
       return <- create Proposer()
     }
   }
@@ -39,21 +39,21 @@ pub contract BlockVersityDAO {
         options: [String],
         startAt: UFix64?,
         endAt: UFix64?,
-        minHoldedBVTAmount: UFix64?
+        minHoldedGVTAmount: UFix64?
         ) {
 
-        BlockVersityDAO.Proposals.append(Proposal(
+        ExampleDAO.Proposals.append(Proposal(
          proposer: self.owner!.address,
          title: title,
          description: description,
          options: options,
          startAt: startAt,
          endAt: endAt,
-         minHoldedBVTAmount: minHoldedBVTAmount
+         minHoldedGVTAmount: minHoldedGVTAmount
         ))
 
-        BlockVersityDAO.votedRecords.append({})
-        BlockVersityDAO.totalProposals = BlockVersityDAO.totalProposals + 1
+        ExampleDAO.votedRecords.append({})
+        ExampleDAO.totalProposals = ExampleDAO.totalProposals + 1
       }
 
       pub fun updateProposal(
@@ -66,10 +66,10 @@ pub contract BlockVersityDAO {
         ) {
 
         pre {
-          BlockVersityDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
+          ExampleDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
         }
 
-        BlockVersityDAO.Proposals[id].update(
+        ExampleDAO.Proposals[id].update(
           title: title,
           description: description,
           startAt: startAt,
@@ -102,7 +102,7 @@ pub contract BlockVersityDAO {
           _options: [String],
           _startAt: UFix64?,
           _endAt: UFix64?,
-          _minHoldedBVTAmount: UFix64?
+          _minHoldedGVTAmount: UFix64?
           ): Void? {
 
             return self.ProposerCapability
@@ -113,7 +113,7 @@ pub contract BlockVersityDAO {
               options: _options,
               startAt: _startAt,
               endAt: _endAt,
-              minHoldedBVTAmount: _minHoldedBVTAmount
+              minHoldedGVTAmount: _minHoldedGVTAmount
               )
         }
 
@@ -167,9 +167,9 @@ pub contract BlockVersityDAO {
     pub fun vote(ProposalId: UInt64, optionIndex: Int) {
       pre {
         self.records[ProposalId] == nil: "Already voted"
-        optionIndex < BlockVersityDAO.Proposals[ProposalId].options.length: "Invalid option"
+        optionIndex < ExampleDAO.Proposals[ProposalId].options.length: "Invalid option"
       }
-      BlockVersityDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
+      ExampleDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
       self.records[ProposalId] = optionIndex
     };
 
@@ -201,9 +201,9 @@ pub contract BlockVersityDAO {
     pub var sealed: Bool
     pub var countIndex: Int
     pub var voided: Bool
-    pub let minHoldedBVTAmount: UFix64
+    pub let minHoldedGVTAmount: UFix64
 
-    init(proposer: Address, title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedBVTAmount: UFix64?) {
+    init(proposer: Address, title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedGVTAmount: UFix64?) {
       pre {
         title.length <= 1000: "New title too long"
         description.length <= 1000: "New description too long"
@@ -214,13 +214,13 @@ pub contract BlockVersityDAO {
       self.options = options
       self.description = description
       self.votesCountActual = []
-      self.minHoldedBVTAmount = minHoldedBVTAmount != nil ? minHoldedBVTAmount! : 0.0
+      self.minHoldedGVTAmount = minHoldedGVTAmount != nil ? minHoldedGVTAmount! : 0.0
 
       for option in options {
         self.votesCountActual.append(0)
       }
 
-      self.id = BlockVersityDAO.totalProposals
+      self.id = ExampleDAO.totalProposals
 
       self.sealed = false
       self.countIndex = 0
@@ -254,14 +254,14 @@ pub contract BlockVersityDAO {
       pre {
         self.isStarted(): "Vote not started"
         !self.isEnded(): "Vote ended"
-        BlockVersityDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
+        ExampleDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
       }
 
-      let voterBVT = BlockVersityDAO.getHoldedBVT(address: voterAddr)
+      let voterBVT = ExampleDAO.getHoldedGVT(address: voterAddr)
 
-      assert(voterBVT >= self.minHoldedBVTAmount, message: "Not enought BVT in your Vault to vote")
+      assert(voterBVT >= self.minHoldedGVTAmount, message: "Not enought BVT in your Vault to vote")
 
-      BlockVersityDAO.votedRecords[self.id][voterAddr] = optionIndex
+      ExampleDAO.votedRecords[self.id][voterAddr] = optionIndex
     }
 
     // return if count ended
@@ -273,7 +273,7 @@ pub contract BlockVersityDAO {
         return self.votesCountActual
       }
       // Fetch the keys of everyone who has voted on this proposal
-      let votedList = BlockVersityDAO.votedRecords[self.id].keys
+      let votedList = ExampleDAO.votedRecords[self.id].keys
       // Count from the last time you counted
       var batchEnd = self.countIndex + size
       // If the count index is bigger than the number of voters
@@ -284,7 +284,7 @@ pub contract BlockVersityDAO {
 
       while self.countIndex != batchEnd {
         let address = votedList[self.countIndex]
-        let votedOptionIndex = BlockVersityDAO.votedRecords[self.id][address]!
+        let votedOptionIndex = ExampleDAO.votedRecords[self.id][address]!
         self.votesCountActual[votedOptionIndex] = self.votesCountActual[votedOptionIndex] + 1
 
         self.countIndex = self.countIndex + 1
@@ -304,14 +304,14 @@ pub contract BlockVersityDAO {
     }
 
     pub fun getTotalVoted(): Int {
-      return BlockVersityDAO.votedRecords[self.id].keys.length
+      return ExampleDAO.votedRecords[self.id].keys.length
     }
   }
 
-  pub fun getHoldedBVT(address: Address): UFix64 {
+  pub fun getHoldedGVT(address: Address): UFix64 {
     let acct = getAccount(address)
-    let vaultRef = acct.getCapability(BlockVersityToken.VaultPublicPath)
-        .borrow<&BlockVersityToken.Vault{FungibleToken.Balance}>()
+    let vaultRef = acct.getCapability(GovernanceToken.VaultPublicPath)
+        .borrow<&GovernanceToken.Vault{FungibleToken.Balance}>()
         ?? panic("Could not borrow Balance reference to the Vault")
 
     return vaultRef.balance
@@ -333,7 +333,7 @@ pub contract BlockVersityDAO {
     return self.Proposals[ProposalId].count(size: maxSize)
   }
 
-  pub fun initVoter(): @BlockVersityDAO.Voter {
+  pub fun initVoter(): @ExampleDAO.Voter {
     return <- create Voter()
   }
 
@@ -342,18 +342,18 @@ pub contract BlockVersityDAO {
     self.votedRecords = []
     self.totalProposals = 0
 
-    self.AdminStoragePath = /storage/BlockVersityDAOAdmin
-    self.ProposerStoragePath = /storage/BlockVersityDAOProposer
-    self.ProposerProxyPublicPath = /public/BlockVersityDAOProposerProxy
-    self.ProposerProxyStoragePath = /storage/BlockVersityDAOProposerProxy
-    self.VoterStoragePath = /storage/BlockVersityDAOVoter
-    self.VoterPublicPath = /public/BlockVersityDAOVoter
-    self.VoterPath = /private/BlockVersityDAOVoter
+    self.AdminStoragePath = /storage/ExampleDAOAdmin
+    self.ProposerStoragePath = /storage/ExampleDAOProposer
+    self.ProposerProxyPublicPath = /public/ExampleDAOProposerProxy
+    self.ProposerProxyStoragePath = /storage/ExampleDAOProposerProxy
+    self.VoterStoragePath = /storage/ExampleDAOVoter
+    self.VoterPublicPath = /public/ExampleDAOVoter
+    self.VoterPath = /private/ExampleDAOVoter
 
     self.account.save(<-create Admin(), to: self.AdminStoragePath)
     self.account.save(<-create Proposer(), to: self.ProposerStoragePath)
     self.account.save(<-create Voter(), to: self.VoterStoragePath)
-    self.account.link<&BlockVersityDAO.Voter>(
+    self.account.link<&ExampleDAO.Voter>(
             self.VoterPublicPath,
             target: self.VoterStoragePath
         )

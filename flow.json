@@ -7,17 +7,14 @@
 	},
 	"contracts": {
 		"Debug": "./contracts/utility/Debug.cdc",
-		"testFT": "./contracts/utility/testFT.cdc",
-		"Whitelist": "./contracts/Whitelist.cdc",
-		"BlockVersityToken": {
-			"source": "./contracts/BlockVersityToken.cdc",
+		"GovernanceToken": {
+			"source": "./contracts/GovernanceToken.cdc",
 			"aliases": {
 				"testnet": "0x800a10d0fff7acd4"
 			}
 		},
-		"BlockVersityTokenPublicSale": "./contracts/sales/BlockVersityTokenPublicSale.cdc",
-		"BlockVersityDAO": "./contracts/DAO/BlockVersityDAO.cdc",
-		"DaoTest": "./contracts/DAO/DaoTest.cdc",
+		"GovernanceTokenPublicSale": "./contracts/sales/GovernanceTokenPublicSale.cdc",
+		"ExampleDAO": "./contracts/DAO/ExampleDAO.cdc",
 		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
 		"exampleToken": "./contracts/exampleToken.cdc",
 		"FungibleToken": {
@@ -63,15 +60,8 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"accounts": {
-		"testnet-blockVersity": {
-			"address": "0x800a10d0fff7acd4",
-			"key": {
-				"type": "hex",
-				"index": 0,
-				"signatureAlgorithm": "ECDSA_P256",
-				"hashAlgorithm": "SHA3_256",
-				"privateKey": "077a4268773503750e1ad2757f3f6768ff73ef03c3410e2e7e4e027ca43b2a04"
-			}
+		"BlockVersity": {
+			"fromFile": "BlockVersity.private.json"
 		},
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
@@ -110,18 +100,18 @@
 		"emulator": {
 			"emulator-bob": [],
 			"emulator-account": [
-				"BlockVersityToken",
+				"GovernanceToken",
 				"FUSD",
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"NonFungibleToken",
-				"BlockVersityDAO"
+				"ExampleDAO"
 			],
 			"emulator-alice": []
 		},
 		"testnet": {
-			"testnet-blockVersity": [
-				"BlockVersityTokenPublicSale"
+			"BlockVersity": [
+				"GovernanceTokenPublicSale"
 			]
 		},
 		"mainnet": {

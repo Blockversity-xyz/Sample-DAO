@@ -2,9 +2,10 @@ import FungibleToken from "./utility/FungibleToken.cdc"
 import MetadataViews from "./utility/MetadataViews.cdc"
 import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
 
-pub contract ExampleToken: FungibleToken {
+// Token contract for GovernanceToken (GVT)
+pub contract GovernanceToken: FungibleToken {
 
-    /// Total supply of ExampleTokens in existence
+    /// Total supply of BlockVersityTokens in existence
     pub var totalSupply: UFix64
 
     /// Storage and Public Paths
@@ -79,7 +80,7 @@ pub contract ExampleToken: FungibleToken {
         /// @param from: The Vault resource containing the funds that will be deposited
         ///
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @ExampleToken.Vault
+            let vault <- from as! @GovernanceToken.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -88,11 +89,11 @@ pub contract ExampleToken: FungibleToken {
 
         destroy() {
             if self.balance > 0.0 {
-                ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
+                GovernanceToken.totalSupply = GovernanceToken.totalSupply - self.balance
             }
         }
 
-        /// The way of getting all the Metadata Views implemented by ExampleToken
+        /// The way of getting all the Metadata Views implemented by GovernanceToken
         ///
         /// @return An array of Types defining the implemented views. This value will be used by
         ///         developers to know which parameter to pass to the resolveView() method.
@@ -103,7 +104,7 @@ pub contract ExampleToken: FungibleToken {
                     Type<FungibleTokenMetadataViews.FTVaultData>()]
         }
 
-        /// The way of getting a Metadata View out of the ExampleToken
+        /// The way of getting a Metadata View out of the GovernanceToken
         ///
         /// @param view: The Type of the desired view.
         /// @return A structure representing the requested view.
@@ -118,32 +119,35 @@ pub contract ExampleToken: FungibleToken {
                 case Type<FungibleTokenMetadataViews.FTDisplay>():
                     let media = MetadataViews.Media(
                             file: MetadataViews.HTTPFile(
-                            url: "https://assets.website-files.com/5f6294c0c7a8cdd643b1c820/5f6294c0c7a8cda55cb1c936_Flow_Wordmark.svg"
+                            url: "https://www.blockversity.xyz/img/logo-1-1@1x.png"
                         ),
                         mediaType: "image/svg+xml"
                     )
                     let medias = MetadataViews.Medias([media])
                     return FungibleTokenMetadataViews.FTDisplay(
-                        name: "Example Fungible Token",
-                        symbol: "EFT",
-                        description: "This fungible token is used as an example to help you develop your next FT #onFlow.",
-                        externalURL: MetadataViews.ExternalURL("https://example-ft.onflow.org"),
+                        name: "BlockVersity Fungible Token",
+                        symbol: "GVT",
+                        description: "This fungible token is used as a governance token for the BlockVersity DAO built on Flow",
+                        externalURL: MetadataViews.ExternalURL("https://www.blockversity.xyz/"),
                         logos: medias,
                         socials: {
-                            "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
+                            "Twitter": MetadataViews.ExternalURL("https://twitter.com/BlockV3rsity"),
+                            "Instagram": MetadataViews.ExternalURL("https://www.instagram.com/blockversity3.0"),
+                            "Facebook": MetadataViews.ExternalURL("https://www.facebook.com/BlockV3rsity"),
+                            "LinkedIn": MetadataViews.ExternalURL("https://www.linkedin.com/company/blockversity/")
                         }
                     )
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
                     return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: ExampleToken.VaultStoragePath,
-                        receiverPath: ExampleToken.ReceiverPublicPath,
-                        metadataPath: ExampleToken.VaultPublicPath,
-                        providerPath: /private/exampleTokenVault,
-                        receiverLinkedType: Type<&ExampleToken.Vault{FungibleToken.Receiver}>(),
-                        metadataLinkedType: Type<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
-                        providerLinkedType: Type<&ExampleToken.Vault{FungibleToken.Provider}>(),
-                        createEmptyVaultFunction: (fun (): @ExampleToken.Vault {
-                            return <-ExampleToken.createEmptyVault()
+                        storagePath: GovernanceToken.VaultStoragePath,
+                        receiverPath: GovernanceToken.ReceiverPublicPath,
+                        metadataPath: GovernanceToken.VaultPublicPath,
+                        providerPath: /private/BlockVersityTokenVault,
+                        receiverLinkedType: Type<&GovernanceToken.Vault{FungibleToken.Receiver}>(),
+                        metadataLinkedType: Type<&GovernanceToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
+                        providerLinkedType: Type<&GovernanceToken.Vault{FungibleToken.Provider}>(),
+                        createEmptyVaultFunction: (fun (): @FungibleToken.Vault {
+                            return <-GovernanceToken.createEmptyVault()
                         })
                     )
             }
@@ -197,12 +201,12 @@ pub contract ExampleToken: FungibleToken {
         /// @param amount: The quantity of tokens to mint
         /// @return The Vault resource containing the minted tokens
         ///
-        pub fun mintTokens(amount: UFix64): @ExampleToken.Vault {
+        pub fun mintTokens(amount: UFix64): @GovernanceToken.Vault {
             pre {
                 amount > 0.0: "Amount minted must be greater than zero"
                 amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
             }
-            ExampleToken.totalSupply = ExampleToken.totalSupply + amount
+            GovernanceToken.totalSupply = GovernanceToken.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -225,7 +229,7 @@ pub contract ExampleToken: FungibleToken {
         /// @param from: The Vault resource containing the tokens to burn
         ///
         pub fun burnTokens(from: @FungibleToken.Vault) {
-            let vault <- from as! @ExampleToken.Vault
+            let vault <- from as! @GovernanceToken.Vault
             let amount = vault.balance
             destroy vault
             emit TokensBurned(amount: amount)
@@ -233,11 +237,13 @@ pub contract ExampleToken: FungibleToken {
     }
 
     init() {
-        self.totalSupply = 1000.0
-        self.VaultStoragePath = /storage/exampleTokenVault
-        self.VaultPublicPath = /public/exampleTokenMetadata
-        self.ReceiverPublicPath = /public/exampleTokenReceiver
-        self.AdminStoragePath = /storage/exampleTokenAdmin
+        // Total supply of GVT is 300M
+        self.totalSupply = 300_000_000.0
+
+        self.VaultStoragePath = /storage/BlockVersityTokenVault
+        self.VaultPublicPath = /public/BlockVersityTokenMetadata
+        self.ReceiverPublicPath = /public/BlockVersityTokenReceiver
+        self.AdminStoragePath = /storage/BlockVersityTokenAdmin
 
         // Create the Vault with the total supply of tokens and save it in storage.
         let vault <- create Vault(balance: self.totalSupply)
@@ -245,14 +251,14 @@ pub contract ExampleToken: FungibleToken {
 
         // Create a public capability to the stored Vault that exposes
         // the `deposit` method through the `Receiver` interface.
-        self.account.link<&{FungibleToken.Receiver}>(
+        self.account.link<&GovernanceToken.Vault{FungibleToken.Receiver}>(
             self.ReceiverPublicPath,
             target: self.VaultStoragePath
         )
 
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field and the `resolveView` method through the `Balance` interface
-        self.account.link<&ExampleToken.Vault{FungibleToken.Balance}>(
+        self.account.link<&GovernanceToken.Vault{FungibleToken.Balance}>(
             self.VaultPublicPath,
             target: self.VaultStoragePath
         )
@@ -264,4 +270,3 @@ pub contract ExampleToken: FungibleToken {
         emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
- 
