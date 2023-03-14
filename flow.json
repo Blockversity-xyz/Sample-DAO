@@ -13,7 +13,6 @@
 				"testnet": "0x800a10d0fff7acd4"
 			}
 		},
-		"GovernanceTokenPublicSale": "./contracts/sales/GovernanceTokenPublicSale.cdc",
 		"ExampleDAO": "./contracts/DAO/ExampleDAO.cdc",
 		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
 		"exampleToken": "./contracts/exampleToken.cdc",
@@ -108,16 +107,6 @@
 				"ExampleDAO"
 			],
 			"emulator-alice": []
-		},
-		"testnet": {
-			"BlockVersity": [
-				"GovernanceTokenPublicSale"
-			]
-		},
-		"mainnet": {
-			"emulator-second": [
-				"Debug"
-			]
 		}
 	}
 }

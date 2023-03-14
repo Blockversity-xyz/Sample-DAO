@@ -5,7 +5,7 @@ import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc
 // Token contract for GovernanceToken (GVT)
 pub contract GovernanceToken: FungibleToken {
 
-    /// Total supply of BlockVersityTokens in existence
+    /// Total supply of Governance Tokens in existence
     pub var totalSupply: UFix64
 
     /// Storage and Public Paths
@@ -240,10 +240,10 @@ pub contract GovernanceToken: FungibleToken {
         // Total supply of GVT is 300M
         self.totalSupply = 300_000_000.0
 
-        self.VaultStoragePath = /storage/BlockVersityTokenVault
-        self.VaultPublicPath = /public/BlockVersityTokenMetadata
-        self.ReceiverPublicPath = /public/BlockVersityTokenReceiver
-        self.AdminStoragePath = /storage/BlockVersityTokenAdmin
+        self.VaultStoragePath = /storage/GovernanceTokenVault
+        self.VaultPublicPath = /public/GovernanceTokenMetadata
+        self.ReceiverPublicPath = /public/GovernanceTokenReceiver
+        self.AdminStoragePath = /storage/GovernanceTokenAdmin
 
         // Create the Vault with the total supply of tokens and save it in storage.
         let vault <- create Vault(balance: self.totalSupply)

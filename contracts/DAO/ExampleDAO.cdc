@@ -18,6 +18,11 @@ pub contract ExampleDAO {
   pub let VoterPublicPath: PublicPath;
   pub let VoterPath: PrivatePath;
 
+    // Events
+  pub event ContractInitialized()
+  pub event ProposalCreated(Title: String, Proposer: Address, MinHoldedGVTAmount: UFix64?)
+  pub event VoteSubmitted(Voter: Address, ProposalId: Int, OptionIndex: Int)
+
   pub resource Admin {
     pub fun createProposer(): @ExampleDAO.Proposer {
       return <- create Proposer()
@@ -232,6 +237,8 @@ pub contract ExampleDAO {
       self.endAt = endAt != nil ? endAt! : self.createdAt + 86400.0 * 14.0 // Around a year
 
       self.voided = false
+
+      emit ProposalCreated(Title: title, Proposer: proposer, MinHoldedGVTAmount: minHoldedGVTAmount)
     }
 
     pub fun update(title: String?, description: String?, startAt: UFix64?, endAt: UFix64?, voided: Bool?) {
@@ -257,11 +264,13 @@ pub contract ExampleDAO {
         ExampleDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
       }
 
-      let voterBVT = ExampleDAO.getHoldedGVT(address: voterAddr)
+      let voterGVT = ExampleDAO.getHoldedGVT(address: voterAddr)
 
-      assert(voterBVT >= self.minHoldedGVTAmount, message: "Not enought BVT in your Vault to vote")
+      assert(voterGVT >= self.minHoldedGVTAmount, message: "Not enought GVT in your Vault to vote")
 
       ExampleDAO.votedRecords[self.id][voterAddr] = optionIndex
+
+      emit VoteSubmitted(Voter: voterAddr, ProposalId: self.id, OptionIndex: optionIndex)
     }
 
     // return if count ended
@@ -357,5 +366,7 @@ pub contract ExampleDAO {
             self.VoterPublicPath,
             target: self.VoterStoragePath
         )
+
+    emit ContractInitialized()
   }
 }

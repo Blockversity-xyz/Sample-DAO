@@ -1,10 +1,10 @@
-import BlockVersityDAO from "../../contracts/DAO/BlockVersityDAO.cdc"
+import ExampleDAO from "../../contracts/DAO/ExampleDAO.cdc"
 
 transaction(ProposalId: UInt64, OptionIndex: Int) {
 
   prepare(signer: AuthAccount) {
   let voter = signer
-  .borrow<&BlockVersityDAO.Voter>(from: BlockVersityDAO.VoterStoragePath)
+  .borrow<&ExampleDAO.Voter>(from: ExampleDAO.VoterStoragePath)
         ?? panic("Signer is not a Voter")
     voter.vote(ProposalId: ProposalId, optionIndex: OptionIndex)
   }

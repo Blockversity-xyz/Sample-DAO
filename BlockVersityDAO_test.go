@@ -24,40 +24,36 @@ func TestProposers(t *testing.T) {
 		- Bob creates a Proposal
 	*/
 	color.Red("Should be able setup a ProposerProxy inside Bob's account")
-	o.Tx("DAO/setupProposerProxy",
+	o.Tx("DAO/setup/setupProposerProxy",
 		WithSigner("bob")).AssertSuccess(t).Print()
-	color.Green("Pass")
 
 	color.Red("Bob will attempt to make a proposal with the Proxy, but fails")
 	o.Tx("DAO/createProposal",
 		WithSigner("bob"),
-		WithArg("title", "How much $BVT tokens grant should the BlockVersity ecosystem fund allocate in support for Ukraine?"),
-		WithArg("description", "BlockVersity is dedicated to stop the doomsday clock from moving any closer to midnight, at any cost."),
-		WithArg("options", `["200K $BVT", "600K $BVT", "1000K $BVT"]`),
+		WithArg("title", "How much $GVT tokens grant should the ExampleDAO ecosystem fund allocate in support for Ukraine?"),
+		WithArg("description", "ExampleDAO is dedicated to stop the doomsday clock from moving any closer to midnight, at any cost."),
+		WithArg("options", `["200K $GVT", "600K $GVT", "1000K $GVT"]`),
 		WithArg("startAt", "1641373200.0"),
 		WithArg("endAt", "1759546000.0"),
-		WithArg("minHoldedBVTAmount", "100.0"),
-	).AssertFailure(t, "unexpectedly found nil while forcing an Optional value")
-	color.Green("Pass")
+		WithArg("minHoldedGVTAmount", "100.0"),
+	).AssertFailure(t, "unexpectedly found nil while forcing an Optional value").Print()
 
 	color.Red("Admin should be able deposit a Proposer resource inside Bob's account")
-	o.Tx("DAO/depositProposer",
+	o.Tx("DAO/setup/depositProposer",
 		WithSigner("account"),
 		WithArg("proposerAddress", "bob"),
 	).AssertSuccess(t).Print()
-	color.Green("Pass")
 
 	color.Red("Bob will attempt to make a proposal again, and succeeds")
 	o.Tx("DAO/createProposal",
 		WithSigner("bob"),
-		WithArg("title", "How much $BVT tokens grant should the BlockVersity ecosystem fund allocate in support for Ukraine?"),
-		WithArg("description", "BlockVersity is dedicated to stop the doomsday clock from moving any closer to midnight, at any cost."),
-		WithArg("options", `["200K $BVT", "600K $BVT", "1000K $BVT"]`),
+		WithArg("title", "How much $GVT tokens grant should the ExampleDAO ecosystem fund allocate in support for Ukraine?"),
+		WithArg("description", "ExampleDAO is dedicated to stop the doomsday clock from moving any closer to midnight, at any cost."),
+		WithArg("options", `["200K $GVT", "600K $GVT", "1000K $GVT"]`),
 		WithArg("startAt", "1641373200.0"),
 		WithArg("endAt", "1759546000.0"),
-		WithArg("minHoldedBVTAmount", "100.0"),
+		WithArg("minHoldedGVTAmount", "100.0"),
 	).AssertSuccess(t).Print()
-	color.Green("Pass")
 
 	// Bob votes
 	color.Red("Bob tries to Vote on a proposal without the voter resource")
@@ -66,32 +62,27 @@ func TestProposers(t *testing.T) {
 		WithArg("ProposalId", "0"),
 		WithArg("OptionIndex", "1"),
 	).AssertFailure(t, "Signer is not a Voter")
-	color.Green("Pass")
 
 	// Create a Voter
 	color.Red("Should be able to create a Voter resource into the signer's account")
-	o.Tx("DAO/createVoter",
+	o.Tx("DAO/setup/createVoter",
 		WithSigner("bob")).AssertSuccess(t).Print()
-	color.Green("Pass")
 
-	// Bob votes
-	color.Red("Bob tries to Vote on a proposal but doesn't hold enough BVT")
+	// Bob attempts to vote without enough GVT
+	color.Red("Bob tries to Vote on a proposal but doesn't hold enough GVT")
 	o.Tx("DAO/vote",
 		WithSigner("bob"),
 		WithArg("ProposalId", "0"),
 		WithArg("OptionIndex", "1"),
 	).AssertFailure(t, "Could not borrow Balance reference to the Vault")
-	color.Green("Pass")
 
-	// Setup Bob with BVT
-	color.Red("Should be able to setup Bob's account to receive BVT")
-	o.Tx("BlockVersity/setup_account", WithSigner("bob"))
-	color.Green("Pass")
+	// Setup Bob with GVT
+	color.Red("Should be able to setup Bob's account to receive GVT")
+	o.Tx("GovernanceToken/setup_account", WithSigner("bob")).Print()
 
-	// Transfer 101 BVT to Bob from Account
-	color.Red("Should be able to send 101 BVT to Bob")
-	o.Tx("BlockVersity/transferBVT", WithSigner("account"), WithArg("amount", "101.0"), WithArg("recipient", "bob"))
-	color.Green("Pass")
+	// Transfer 101 GVT to Bob from Account
+	color.Red("Should be able to send 101 GVT to Bob")
+	o.Tx("GovernanceToken/transferGVT", WithSigner("account"), WithArg("amount", "101.0"), WithArg("recipient", "bob")).Print()
 
 	color.Red("Bob should be able to vote on Proposal now")
 	o.Tx("DAO/vote",
@@ -99,7 +90,6 @@ func TestProposers(t *testing.T) {
 		WithArg("ProposalId", "0"),
 		WithArg("OptionIndex", "1"),
 	).AssertSuccess(t)
-	color.Green("Pass")
 
 	// Account votes
 	color.Red("Account should be able to Vote on a proposal")
@@ -108,40 +98,33 @@ func TestProposers(t *testing.T) {
 		WithArg("ProposalId", "0"),
 		WithArg("OptionIndex", "1"),
 	).AssertSuccess(t)
-	color.Green("Pass")
 
 	color.Red("Should be able to fetch Voter's voted options")
-	o.Script("DAO/getVoterOptions",
+	o.Script("getVoterOptions",
 		WithArg("address", "account")).Print()
-	color.Green("Pass")
 
 	// Anyone should be able to count votes on the contract
 	color.Red("Alice should be able to count votes on a proposal")
-	o.Script("DAO/countVotes",
+	o.Script("countVotes",
 		WithArg("ProposalId", "0"),
 	).Print()
-	color.Green("Pass")
 
 	// Anyone should be able to fetch a list of proposals from the DAO contract
 	color.Red("Should be able to fetch a list of proposals")
-	o.Script("DAO/getProposals").Print()
-	color.Green("Pass")
+	o.Script("getProposals").Print()
 
 	// Count votes on proposal
 	color.Red("Should be able to count votes on one proposal")
-	o.Script("DAO/countVotes",
+	o.Script("countVotes",
 		WithArg("ProposalId", "0")).Print()
-	color.Green("Pass")
 
 	// Fetch one proposal
 	color.Red("Should be able to fetch a single proposal")
-	o.Script("DAO/getProposal",
+	o.Script("getProposal",
 		WithArg("ProposalId", "0")).Print()
-	color.Green("Pass")
 
 	// Fetch one proposal's count
 	color.Red("Should be able to fetch the number of total votes on one proposal")
-	o.Script("DAO/getProposalTotalVoted",
+	o.Script("getProposalTotalVoted",
 		WithArg("ProposalId", "0")).Print()
-	color.Green("Pass")
 }

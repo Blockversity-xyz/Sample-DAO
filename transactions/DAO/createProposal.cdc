@@ -1,4 +1,4 @@
-import BlockVersityDAO from "../../contracts/DAO/BlockVersityDAO.cdc"
+import ExampleDAO from "../../contracts/DAO/ExampleDAO.cdc"
 
 transaction(
   title: String,
@@ -6,18 +6,18 @@ transaction(
   options: [String],
   startAt: UFix64,
   endAt: UFix64,
-  minHoldedBVTAmount: UFix64?
+  minHoldedGVTAmount: UFix64?
   ) {
-  let proposer: &BlockVersityDAO.ProposerProxy?
+  let proposer: &ExampleDAO.ProposerProxy?
   let minHoldedBVTAmount:UFix64?
 
   prepare(signer: AuthAccount) {
     self.proposer = signer
-        .borrow<&BlockVersityDAO.ProposerProxy>(from: BlockVersityDAO.ProposerProxyStoragePath)
+        .borrow<&ExampleDAO.ProposerProxy>(from: ExampleDAO.ProposerProxyStoragePath)
         ?? panic("No Proposer Proxy available")
 
 
-    self.minHoldedBVTAmount = minHoldedBVTAmount != nil ? minHoldedBVTAmount! : 0.0
+    self.minHoldedBVTAmount = minHoldedGVTAmount != nil ? minHoldedGVTAmount! : 0.0
   }
 
 
@@ -29,7 +29,7 @@ transaction(
       _options: options,
       _startAt: startAt,
       _endAt: endAt,
-      _minHoldedBVTAmount: self.minHoldedBVTAmount
+      _minHoldedGVTAmount: self.minHoldedBVTAmount
     ) ?? panic("No proposer Resource deposited yet")
   }
 }
