@@ -42,11 +42,7 @@ export default function CreateProposal({ onSubmit }: Props) {
 
       const start = (startAt.getTime() / 1000).toFixed(2);
       const end = (endAt.getTime() / 1000).toFixed(2);
-      console.log("start", start);
-      console.log("end", end);
-      console.log("start", typeof start);
-      console.log("end", typeof end);
-      // how to add a .0 to the end of a number? for example  1620000000 => 1620000000.0
+
       const proposalId = await createProposal(
         title,
         description,

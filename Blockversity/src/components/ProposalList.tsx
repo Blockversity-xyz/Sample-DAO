@@ -42,10 +42,6 @@ export default function ProposalList() {
     ? proposalData.filter((proposal) => proposal.endAt >= new Date())
     : proposalData.filter((proposal) => proposal.endAt < new Date());
 
-
-  console.log(proposals, "proposals");
-  console.log(proposalData, "proposalData");
-  console.log(showActiveProposals, "showActiveProposals");
   return (
     <div className='flex justify-center items-center'>
       <div className='px-4 pt-3 pb-4 flex flex-col text-white'>
