@@ -370,3 +370,4 @@ pub contract ExampleDAO {
     emit ContractInitialized()
   }
 }
+ 
