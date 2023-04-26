@@ -1,8 +1,8 @@
-export const purchaseBVT = () => {
+export const purchaseST = () => {
   return `
 import NonFungibleToken from 0x631e88ae7f1d7c20
 import FUSD from 0xe223d8a629e49c68
-import BlockVersityTokenPublicSale from 0x49a232bb31e5dd58
+import SampleTokenPublicSale from 0x49a232bb31e5dd58
 
 transaction(amount: UFix64) {
 
@@ -22,7 +22,7 @@ transaction(amount: UFix64) {
     }
 
     execute {
-        BlockVersityTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
+        SampleTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
     }
 }
   `

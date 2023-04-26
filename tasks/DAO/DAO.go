@@ -28,14 +28,14 @@ func main() {
 	fmt.Println("Press any key to continue")
 	fmt.Scanln()
 
-	// Setup Bob with BVT
-	color.Red("Should be able to setup Bob's account to receive BVT")
-	o.Tx("BlockVersity/token/setup_account", WithSigner("bob"))
+	// Setup Bob with ST
+	color.Red("Should be able to setup Bob's account to receive ST")
+	o.Tx("Sample/token/setup_account", WithSigner("bob"))
 	color.Green("Pass")
 
-	// Transfer 101 BVT to Bob from Account
-	color.Red("Should be able to send 101 BVT to Bob")
-	o.Tx("BlockVersity/token/transferBVT", WithSigner("account"), WithArg("amount", "101.0"), WithArg("recipient", "bob"))
+	// Transfer 101 ST to Bob from Account
+	color.Red("Should be able to send 101 ST to Bob")
+	o.Tx("Sample/token/transferST", WithSigner("account"), WithArg("amount", "101.0"), WithArg("recipient", "bob"))
 	color.Green("Pass")
 
 	// Create a Proposer
@@ -54,12 +54,12 @@ func main() {
 	color.Red("Account should be able to create a new Topic")
 	o.Tx("DAO/createTopic",
 		WithSigner("account"),
-		WithArg("_title", "How much $BVT tokens grant should the BlockVersity ecosystem fund allocate for war in Ukraine?"),
-		WithArg("_description", "BlockVersity is dedicated to stop the doomsday clock from moving any closer to midnight, at any cost."),
-		WithArg("_options", `["200K $BVT", "600K $BVT", "1000K $BVT"]`),
+		WithArg("_title", "How much $ST tokens grant should the Sample ecosystem fund allocate for war in Ukraine?"),
+		WithArg("_description", "Sample is dedicated to stop the doomsday clock from moving any closer to midnight, at any cost."),
+		WithArg("_options", `["200K $ST", "600K $ST", "1000K $ST"]`),
 		WithArg("_startAt", "1641373200.0"),
 		WithArg("_endAt", "1759546000.0"),
-		WithArg("_minHoldedBVTAmount", "100.0"),
+		WithArg("_minHoldedSTAmount", "100.0"),
 	)
 	color.Green("Pass")
 

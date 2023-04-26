@@ -3,16 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-    getBVTBalance,
+    getSTBalance,
     getFUSDBalance,
     getIsSaleActive,
     getPurchasers,
-    setupBVT,
+    setupST,
     deployICO,
-    depositBVT,
+    depositST,
     pause,
     unPause,
-    withdrawBVT,
+    withdrawST,
     refund,
     distribute,
 } from "../Flow/ICOActions";
@@ -46,7 +46,7 @@ const AdminDashboard: React.FC = () => {
     const [addresses, setAddresses] = useState([]);
 
     useEffect(() => {
-        getBVTBalance().then((_balance) => setTokenBalance(_balance));
+        getSTBalance().then((_balance) => setTokenBalance(_balance));
         getFUSDBalance().then((_balance) => setFUSDBalance(_balance));
         getIsSaleActive().then((boolean) => setTokenSalePaused(!boolean));
         getPurchasers().then((addresses) => {
@@ -63,15 +63,15 @@ const AdminDashboard: React.FC = () => {
     };
 
     const handleDeposit = async () => {
-        const response = await depositBVT(depositAmount.toFixed(1));
+        const response = await depositST(depositAmount.toFixed(1));
         console.log(response);
-        // logic to deposit BVT and update BVT balance
+        // logic to deposit ST and update ST balance
     };
 
     const handleWithdraw = async () => {
-        const response = await withdrawBVT(withdrawAmount.toFixed(1));
+        const response = await withdrawST(withdrawAmount.toFixed(1));
         console.log(response);
-        // logic to withdraw BVT and update BVT balance
+        // logic to withdraw ST and update ST balance
     };
 
     const handlePauseTokenSale = () => {
@@ -150,9 +150,9 @@ const AdminDashboard: React.FC = () => {
                     </div>
 
                     <div className='mb-4'>
-                        <h2 className='text-center mb-4'>BVT Current Sale Price {salePrice}</h2>
+                        <h2 className='text-center mb-4'>ST Current Sale Price {salePrice}</h2>
                         <div className='text-white mb-2 text-center'>
-                            BVT in ICO contract Balance
+                            ST in ICO contract Balance
                         </div>
                         <div className='text-white text-center'>{tokenBalance}</div>
                     </div>
@@ -171,7 +171,7 @@ const AdminDashboard: React.FC = () => {
                         <button
                             className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#3d4f7c] rounded-full cursor-pointer'
                             onClick={handleDeposit}>
-                            Deposit BVT
+                            Deposit ST
                         </button>
                     </div>
                     <div className='mb-4'>
@@ -185,7 +185,7 @@ const AdminDashboard: React.FC = () => {
                         <button
                             className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#3d4f7c] rounded-full cursor-pointer'
                             onClick={handleWithdraw}>
-                            Withdraw BVT
+                            Withdraw ST
                         </button>
                     </div>
                     <div className='mb-4'>
@@ -204,7 +204,7 @@ const AdminDashboard: React.FC = () => {
                                 onChange={(e) => setAddressDistribute(e.target.value)}
                                 className='text-black'
                             />
-                            <div className='text-white mb-2'>Allocation Percentage ($BVT)</div>
+                            <div className='text-white mb-2'>Allocation Percentage ($ST)</div>
                             <input
                                 type='range'
                                 min={0}

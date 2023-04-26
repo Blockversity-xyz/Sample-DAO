@@ -1,5 +1,5 @@
 import FungibleToken from "../../contracts/utility/FungibleToken.cdc"
-import BlockVersityToken from "../../contracts/BlockVersityToken.cdc"
+import SampleToken from "../../contracts/SampleToken.cdc"
 
 transaction(amount: UFix64, recipient: Address) {
 
@@ -8,7 +8,7 @@ transaction(amount: UFix64, recipient: Address) {
 
     prepare(signer: AuthAccount) {
         // Get a reference to the signer's stored vault
-        let vaultRef = signer.borrow<&BlockVersityToken.Vault>(from: /storage/BlockVersityTokenVault)
+        let vaultRef = signer.borrow<&SampleToken.Vault>(from: /storage/SampleTokenVault)
             ?? panic("Could not borrow reference to the owner's Vault!")
 
         // Withdraw tokens from the signer's stored vault
@@ -20,7 +20,7 @@ transaction(amount: UFix64, recipient: Address) {
         let recipientAccount = getAccount(recipient)
 
         // Get a reference to the recipient's Receiver
-        let receiverRef = recipientAccount.getCapability(/public/BlockVersityTokenReceiver)
+        let receiverRef = recipientAccount.getCapability(/public/SampleTokenReceiver)
             .borrow<&{FungibleToken.Receiver}>()
             ?? panic("Could not borrow receiver reference to the recipient's Vault")
 

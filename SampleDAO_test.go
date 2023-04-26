@@ -43,8 +43,8 @@ func TestProposers(t *testing.T) {
 			color.Red("Should be able to create a proposal")
 			o.Tx("DAO/createProposal",
 				WithSigner("bob"),
-				WithArg("title", "How about a million BVT?"),
-				WithArg("description", "A million BVT to save the world!"),
+				WithArg("title", "How about a million ST?"),
+				WithArg("description", "A million ST to save the world!"),
 				WithArg("options", `["Yes", "No"]`),
 				WithArg("startAt", "1641373200.0"),
 				WithArg("endAt", "1641546000.0")).Print()

@@ -14,7 +14,7 @@ func main() {
 		WithNetwork("testnet"),
 	)
 
-	fmt.Println("Transfering Flow from BlockVersity")
+	fmt.Println("Transfering Flow from Sample")
 	fmt.Println("Press any key to continue")
 	fmt.Scanln()
 
@@ -23,17 +23,17 @@ func main() {
 	*/
 
 	color.Green("Should be able to transfer Flow from the testnet account to an address")
-	o.Script("BlockVersity/token/getBalance",
+	o.Script("Sample/token/getBalance",
 		WithArg("account", "0x49a232bb31e5dd58")).Print()
 
 	o.Tx(
-		"./flow/transfer_blockVersity",
-		WithSigner("blockVersity"),
+		"./flow/transfer_Sample",
+		WithSigner("Sample"),
 		WithArg("amount", "100.0"),
 		WithArg("recipient", "0x49a232bb31e5dd58"),
 	).Print()
 
 	color.Green("Should be able to transfer Flow from the testnet account to an address")
-	o.Script("BlockVersity/token/getBalance",
+	o.Script("Sample/token/getBalance",
 		WithArg("account", "0x49a232bb31e5dd58")).Print()
 }

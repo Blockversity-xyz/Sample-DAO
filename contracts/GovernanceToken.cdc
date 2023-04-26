@@ -125,9 +125,9 @@ pub contract GovernanceToken: FungibleToken {
                     )
                     let medias = MetadataViews.Medias([media])
                     return FungibleTokenMetadataViews.FTDisplay(
-                        name: "BlockVersity Fungible Token",
+                        name: "Sample Fungible Token",
                         symbol: "GVT",
-                        description: "This fungible token is used as a governance token for the BlockVersity DAO built on Flow",
+                        description: "This fungible token is used as a governance token for the Sample DAO built on Flow",
                         externalURL: MetadataViews.ExternalURL("https://www.blockversity.xyz/"),
                         logos: medias,
                         socials: {

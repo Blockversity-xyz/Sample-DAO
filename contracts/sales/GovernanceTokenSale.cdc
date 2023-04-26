@@ -95,7 +95,7 @@ pub contract GovernanceTokenPublicSale {
     }
 
   // GVT purchase method
-  // User pays FUSD and get unlocked BlockVersityToken
+  // User pays FUSD and get unlocked SampleToken
   pub fun purchase(from: @FUSD.Vault, address: Address) {
       pre {
           self.saleHasEnded(): "Token sale has ended"

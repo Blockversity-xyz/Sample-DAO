@@ -1,6 +1,6 @@
 import FungibleToken from "./FungibleToken.cdc"
 
-pub contract BVT: FungibleToken {
+pub contract ST: FungibleToken {
 
     // Total supply of Flow tokens in existence
     pub var totalSupply: UFix64
@@ -71,7 +71,7 @@ pub contract BVT: FungibleToken {
         // was a temporary holder of the tokens. The Vault's balance has
         // been consumed and therefore can be destroyed.
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @BVT.Vault
+            let vault <- from as! @ST.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -80,7 +80,7 @@ pub contract BVT: FungibleToken {
 
         destroy() {
             if self.balance > 0.0 {
-                BVT.totalSupply = BVT.totalSupply - self.balance
+                ST.totalSupply = ST.totalSupply - self.balance
             }
         }
     }
@@ -130,12 +130,12 @@ pub contract BVT: FungibleToken {
         // Function that mints new tokens, adds them to the total supply,
         // and returns them to the calling context.
         //
-        pub fun mintTokens(amount: UFix64): @BVT.Vault {
+        pub fun mintTokens(amount: UFix64): @ST.Vault {
             pre {
                 amount > UFix64(0): "Amount minted must be greater than zero"
                 amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
             }
-            BVT.totalSupply = BVT.totalSupply + amount
+            ST.totalSupply = ST.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -160,7 +160,7 @@ pub contract BVT: FungibleToken {
         // total supply in the Vault destructor.
         //
         pub fun burnTokens(from: @FungibleToken.Vault) {
-            let vault <- from as! @BVT.Vault
+            let vault <- from as! @ST.Vault
             let amount = vault.balance
             destroy vault
             emit TokensBurned(amount: amount)
@@ -173,26 +173,26 @@ pub contract BVT: FungibleToken {
         // Create the Vault with the total supply of tokens and save it in storage
         //
         let vault <- create Vault(balance: self.totalSupply)
-        adminAccount.save(<-vault, to: /storage/BVTVault)
+        adminAccount.save(<-vault, to: /storage/STVault)
 
         // Create a public capability to the stored Vault that only exposes
         // the `deposit` method through the `Receiver` interface
         //
-        adminAccount.link<&BVT.Vault{FungibleToken.Receiver}>(
-            /public/BVTReceiver,
-            target: /storage/BVTVault
+        adminAccount.link<&ST.Vault{FungibleToken.Receiver}>(
+            /public/STReceiver,
+            target: /storage/STVault
         )
 
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field through the `Balance` interface
         //
-        adminAccount.link<&BVT.Vault{FungibleToken.Balance}>(
-            /public/BVTBalance,
-            target: /storage/BVTVault
+        adminAccount.link<&ST.Vault{FungibleToken.Balance}>(
+            /public/STBalance,
+            target: /storage/STVault
         )
 
         let admin <- create Administrator()
-        adminAccount.save(<-admin, to: /storage/BVTAdmin)
+        adminAccount.save(<-admin, to: /storage/STAdmin)
 
         // Emit an event that shows that the contract was initialized
         emit TokensInitialized(initialSupply: self.totalSupply)

@@ -13,7 +13,7 @@ transaction(
   minHoldedGVTAmount: UFix64?
   ) {
   let proposer: &ExampleDAO.ProposerProxy?
-  let minHoldedBVTAmount:UFix64?
+  let minHoldedSTAmount:UFix64?
 
   prepare(signer: AuthAccount) {
     self.proposer = signer
@@ -21,7 +21,7 @@ transaction(
         ?? panic("No Proposer Proxy available")
 
 
-    self.minHoldedBVTAmount = minHoldedGVTAmount != nil ? minHoldedGVTAmount! : 0.0
+    self.minHoldedSTAmount = minHoldedGVTAmount != nil ? minHoldedGVTAmount! : 0.0
   }
 
 
@@ -33,7 +33,7 @@ transaction(
       _options: options,
       _startAt: startAt,
       _endAt: endAt,
-      _minHoldedGVTAmount: self.minHoldedBVTAmount
+      _minHoldedGVTAmount: self.minHoldedSTAmount
     ) ?? panic("No proposer Resource deposited yet")
   }
 }
