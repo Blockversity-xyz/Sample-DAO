@@ -16,7 +16,7 @@ const CreateTokenForm = () => {
         name: '',
         symbol: '',
         address: '',
-        maxSupply: 0,
+        maxSupply: 600000000,
         totalSupply: 0,
         tokenPrice: 0,
     });
@@ -29,6 +29,14 @@ const CreateTokenForm = () => {
 
 
     };
+
+    const addresses = [
+        // List of smart contract addresses
+        "0x123456789",
+        "0x987654321",
+        "0xabcdef123",
+        // Add more addresses as needed
+    ];
 
     const handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -58,24 +66,25 @@ const CreateTokenForm = () => {
             />
         </div>
         <div>
-            <label htmlFor="address" className="block font-medium mb-2">Address</label>
-            <input
-                type="text"
+            <label htmlFor="address" className="block font-medium mb-2">
+                Address
+            </label>
+            <select
                 name="address"
                 value={formData.address}
-                onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            >
+                <option value="">Select an address</option>
+                {addresses.map((address) => (
+                    <option key={address} value={address}>
+                        {address}
+                    </option>
+                ))}
+            </select>
         </div>
         <div>
             <label htmlFor="maxSupply" className="block font-medium mb-2">Max Supply</label>
-            <input
-                type="number"
-                name="maxSupply"
-                value={formData.maxSupply}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            600,000,000
         </div>
         <div>
             <label htmlFor="totalSupply" className="block font-medium mb-2">Total Supply</label>

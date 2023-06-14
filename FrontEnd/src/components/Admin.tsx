@@ -33,6 +33,8 @@ const AdminDashboard: React.FC = () => {
     setActiveTab(tab);
   };
 
+
+
   const toggleSections = () => {
     setIsManageAccountActive(!isManageAccountActive);
   };

@@ -1,21 +1,21 @@
-export const depositST = () => {
+export const depositBVT = () => {
   return `
-import SampleTokenPublicSale from 0x49a232bb31e5dd58
-import SampleToken from 0x800a10d0fff7acd4
+import BlockVersityTokenPublicSale from 0x49a232bb31e5dd58
+import BlockVersityToken from 0x800a10d0fff7acd4
 import FungibleToken from 0x9a0766d93b6608b7
 
 transaction(amount: UFix64) {
 
-    let adminRef: &SampleTokenPublicSale.Admin
+    let adminRef: &BlockVersityTokenPublicSale.Admin
 
     let sentVault:  @FungibleToken.Vault
 
     prepare(account: AuthAccount) {
 
-        self.adminRef = account.borrow<&SampleTokenPublicSale.Admin>(from: SampleTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = account.borrow<&BlockVersityTokenPublicSale.Admin>(from: BlockVersityTokenPublicSale.SaleAdminStoragePath)
 			?? panic("Could not borrow reference to the admin!")
 
-        let vaultRef = account.borrow<&SampleToken.Vault>(from: SampleToken.VaultStoragePath)
+        let vaultRef = account.borrow<&BlockVersityToken.Vault>(from: BlockVersityToken.VaultStoragePath)
 			?? panic("Could not borrow reference to the owner's Vault!")
 
         self.sentVault <- vaultRef.withdraw(amount: amount)
@@ -23,8 +23,8 @@ transaction(amount: UFix64) {
 
     execute {
 
-        // Deposit ST
-        self.adminRef.depositST(from: <-self.sentVault)
+        // Deposit BVT
+        self.adminRef.depositBVT(from: <-self.sentVault)
     }
 }
   `

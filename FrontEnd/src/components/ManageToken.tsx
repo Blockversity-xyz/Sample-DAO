@@ -36,10 +36,12 @@ export default function ManageTokensForm() {
     const [contractList, setContractList] = useState<Contract[]>(initialContractList);
 
     const handleFreezeClick = () => {
-        setFormValues({
-            ...formValues,
-            freeze: !formValues.freeze,
-        });
+        if (window.confirm("Are you sure you want to freeze this token? This action is irreversible.")) {
+            setFormValues({
+                ...formValues,
+                freeze: !formValues.freeze,
+            });
+        }
     };
 
     const handleDistributeClick = () => {
@@ -50,10 +52,12 @@ export default function ManageTokensForm() {
     };
 
     const handleRefundClick = () => {
-        setFormValues({
-            ...formValues,
-            refund: !formValues.refund,
-        });
+        if (window.confirm('Are you sure you want to refund?')) {
+            setFormValues({
+                ...formValues,
+                refund: !formValues.refund,
+            });
+        }
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -72,6 +76,22 @@ export default function ManageTokensForm() {
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center">
             <div className="grid grid-cols-2 gap-4 w-full max-w-screen-md">
+                <div className="flex flex-col col-span-2">
+                    <label htmlFor="contract">Contract</label>
+                    <select
+                        id="contract"
+                        name="contract"
+                        value={selectedContract.address}
+                        onChange={handleContractSelect}
+                        className="rounded-lg border-gray-400 border p-2 w-full mt-2"
+                    >
+                        {contractList.map((contract) => (
+                            <option key={contract.address} value={contract.address}>
+                                {contract.address}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <div className="flex flex-col">
 
                     <label htmlFor="refund">Refund</label>
@@ -125,25 +145,6 @@ export default function ManageTokensForm() {
                     >
                         {formValues.distribute ? 'Distributed' : 'Not distributed'}
                     </button>
-                </div>
-                <div className="flex flex-col col-span-2">
-                    <label htmlFor="contract">Contract</label>
-                    <select
-                        id="contract"
-                        name="contract"
-                        value={selectedContract.address}
-                        onChange={handleContractSelect}
-                        className="rounded-lg border-gray-400 border p-2 w-full mt-2"
-                    >
-                        {contractList.map((contract) => (
-                            <option key={contract.address} value={contract.address}>
-                                {contract.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="flex justify-end col-span-2">
-
                 </div>
             </div>
         </form>

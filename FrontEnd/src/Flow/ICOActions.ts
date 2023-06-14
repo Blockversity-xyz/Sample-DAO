@@ -11,7 +11,7 @@ import { Buffer } from "buffer/";
 // ///////////////
 
 // // Scripts
-import { getSTBalance as getSTBalanceScript } from "./Scripts/ICO/getST_Balance";
+import { getBVTBalance as getBVTBalanceScript } from "./Scripts/ICO/getBVT_Balance";
 import { getFUSDVaultBalance as getFUSDVaultBalanceScript } from "./Scripts/ICO/getFUSDVaultBalance";
 import { getIsSaleActive as getIsSaleActiveScript } from "./Scripts/ICO/getIsSaleActive";
 import { getSaleInfo as getSaleInfoScript } from "./Scripts/ICO/getSaleInfo";
@@ -20,14 +20,14 @@ import { getPurchasers as getPurchasersScript } from "./Scripts/ICO/getPurchaser
 
 // // Transactions
 import { deployerTransactionCode } from "./Transactions/ICO/deployICO";
-import { purchaseST as purchaseSTTransaction } from "./Transactions/ICO/purchaseST";
-import { depositST as depositSTTransaction } from "./Transactions/ICO/Admin/depositST";
+import { purchaseBVT as purchaseBVTTransaction } from "./Transactions/ICO/purchaseBVT";
+import { depositBVT as depositBVTTransaction } from "./Transactions/ICO/Admin/depositBVT";
 import { pause as pauseTransaction } from "./Transactions/ICO/Admin/pause";
 import { unPause as unPauseTransaction } from "./Transactions/ICO/Admin/unpause";
 import { refund as refundTransaction } from "./Transactions/ICO/Admin/refund";
 import { distribute as distributeTransaction } from "./Transactions/ICO/Admin/distribute";
-import { withdrawST as withdrawSTTransaction } from "./Transactions/ICO/Admin/withdrawST";
-import { setup_ST as setup_STTransaction } from "./Transactions/ICO/setup_ST";
+import { withdrawBVT as withdrawBVTTransaction } from "./Transactions/ICO/Admin/withdrawBVT";
+import { setup_BVT as setup_BVTTransaction } from "./Transactions/ICO/setup_BVT";
 
 // // ICO Contract Code
 import { contractCode } from "./Transactions/ICO/contractCode";
@@ -37,8 +37,8 @@ export function replaceICOWithProperValues(
   contractAddress: string
 ) {
   return contractCode()
-    .replace('"../SampleToken.cdc"', contractAddress)
-    .replaceAll("SampleToken", tokenName);
+    .replace('"../BlockVersityToken.cdc"', contractAddress)
+    .replaceAll("BlockVersityToken", tokenName);
 }
 
 // // ****** Transactions Functions ****** //
@@ -75,12 +75,12 @@ export const deployICO = async (
   });
 };
 
-// Setup an account to receive ST
-export const setupST = async () => {
+// Setup an account to receive BVT
+export const setupBVT = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
-        cadence: setup_STTransaction(),
+        cadence: setup_BVTTransaction(),
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
@@ -95,33 +95,12 @@ export const setupST = async () => {
   });
 };
 
-// Purchase ST as a user
-export const purchaseST = async (amount: string) => {
+// Purchase BVT as a user
+export const purchaseBVT = async (amount: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
-        cadence: purchaseSTTransaction(),
-        proposer: fcl.currentUser,
-        payer: fcl.currentUser,
-        authorizations: [fcl.currentUser],
-        args: (arg: any, t: any) => [arg(amount, t.UFix64)],
-        limit: 500,
-      });
-      const transaction = await fcl.tx(transactionId).onceSealed();
-      console.log(transaction); // The transactions status and events after being sealed
-    } catch (e) {
-      console.log(e);
-      reject(false);
-    }
-  });
-};
-
-// Deposit ST as an Admin
-export const depositST = async (amount: string) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const transactionId = await fcl.mutate({
-        cadence: depositSTTransaction(),
+        cadence: purchaseBVTTransaction(),
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
@@ -137,12 +116,33 @@ export const depositST = async (amount: string) => {
   });
 };
 
-// Withdraw ST as an Admin
-export const withdrawST = async (amount: string) => {
+// Deposit BVT as an Admin
+export const depositBVT = async (amount: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
-        cadence: withdrawSTTransaction(),
+        cadence: depositBVTTransaction(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [arg(amount, t.UFix64)],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (e) {
+      console.log(e);
+      reject(false);
+    }
+  });
+};
+
+// Withdraw BVT as an Admin
+export const withdrawBVT = async (amount: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: withdrawBVTTransaction(),
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
@@ -179,7 +179,7 @@ export const refund = async (address: string) => {
   });
 };
 
-// Distribute allocated ST to one Address as an Admin
+// Distribute allocated BVT to one Address as an Admin
 export const distribute = async (address: string, allocationAmount: string) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -245,12 +245,12 @@ export const unPause = async () => {
 
 // // ****** Script Functions ****** //
 
-// Get ST Balance on the ICO smart contract.
+// Get BVT Balance on the ICO smart contract.
 
-export const getSTBalance = async () => {
+export const getBVTBalance = async () => {
   try {
     const response = await fcl.query({
-      cadence: getSTBalanceScript(),
+      cadence: getBVTBalanceScript(),
       args: (arg: any, t: any) => [],
     });
     console.log(response);

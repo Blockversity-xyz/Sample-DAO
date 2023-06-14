@@ -2,7 +2,7 @@ export const contractCode =  () => {
   return `
 import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import SampleToken from "../SampleToken.cdc"
+import BlockVersityToken from "../BlockVersityToken.cdc"
 import FUSD from 0xe223d8a629e49c68
 
 pub contract ExamplePublicSale {
@@ -26,8 +26,8 @@ pub contract ExamplePublicSale {
 
     /****** Sale Resources ******/
 
-    // ST holder vault
-    access(contract) let bvtVault: @SampleToken.Vault
+    // BVT holder vault
+    access(contract) let bvtVault: @BlockVersityToken.Vault
 
     // FUSD holder vault
     access(contract) let fusdVault: @FUSD.Vault
@@ -39,10 +39,10 @@ pub contract ExamplePublicSale {
 
     access(contract) var isSaleActive: Bool
 
-    // ST token price (FUSD per ST)
+    // BVT token price (FUSD per BVT)
     access(contract) var price: UFix64
 
-    // ST community sale purchase cap (in FUSD)
+    // BVT community sale purchase cap (in FUSD)
     access(contract) var personalCap: UFix64
 
     // All purchase records
@@ -84,8 +84,8 @@ pub contract ExamplePublicSale {
         }
     }
 
-    // ST purchase method
-    // User pays FUSD and get unlocked SampleToken
+    // BVT purchase method
+    // User pays FUSD and get unlocked BlockVersityToken
     pub fun purchase(from: @FUSD.Vault, address: Address) {
         pre {
             self.isSaleActive: "Token sale is not active"
@@ -121,7 +121,7 @@ pub contract ExamplePublicSale {
         return self.purchases[address]
     }
 
-    pub fun getSTVaultBalance(): UFix64 {
+    pub fun getBVTVaultBalance(): UFix64 {
         return self.bvtVault.balance
     }
 
@@ -146,7 +146,7 @@ pub contract ExamplePublicSale {
             ExamplePublicSale.isSaleActive = false
         }
 
-        // Distribute ST with an allocation amount
+        // Distribute BVT with an allocation amount
         // If user's purchase amount exceeds allocation amount, the remainder will be refunded
         pub fun distribute(address: Address, allocationAmount: UFix64) {
             pre {
@@ -154,9 +154,9 @@ pub contract ExamplePublicSale {
                 ExamplePublicSale.purchases[address]?.state == PurchaseState.initial: "Already distributed or refunded"
             }
 
-            let receiverRef = getAccount(address).getCapability(SampleToken.ReceiverPublicPath)
+            let receiverRef = getAccount(address).getCapability(BlockVersityToken.ReceiverPublicPath)
                 .borrow<&{FungibleToken.Receiver}>()
-                ?? panic("Could not borrow SampleToken receiver reference")
+                ?? panic("Could not borrow BlockVersityToken receiver reference")
 
             let purchaseInfo = ExamplePublicSale.purchases[address]
                 ?? panic("Count not get purchase info for the address")
@@ -234,7 +234,7 @@ pub contract ExamplePublicSale {
             emit NewPersonalCap(personalCap: personalCap)
         }
 
-        pub fun withdrawST(amount: UFix64): @FungibleToken.Vault {
+        pub fun withdrawBVT(amount: UFix64): @FungibleToken.Vault {
             return <- ExamplePublicSale.bvtVault.withdraw(amount: amount)
         }
 
@@ -242,7 +242,7 @@ pub contract ExamplePublicSale {
             return <- ExamplePublicSale.fusdVault.withdraw(amount: amount)
         }
 
-        pub fun depositST(from: @FungibleToken.Vault) {
+        pub fun depositBVT(from: @FungibleToken.Vault) {
             ExamplePublicSale.bvtVault.deposit(from: <- from)
         }
 
@@ -255,7 +255,7 @@ pub contract ExamplePublicSale {
         // Needs Admin to start manually
         self.isSaleActive = false
 
-        // 1 ST = 1 FUSD
+        // 1 BVT = 1 FUSD
         self.price = _price
 
         // Each user can purchase at most 500 FUSD worth of BvT
@@ -264,7 +264,7 @@ pub contract ExamplePublicSale {
         self.purchases = {}
         self.SaleAdminStoragePath = /storage/ExamplePublicSaleAdmin
 
-        self.bvtVault <- SampleToken.createEmptyVault()
+        self.bvtVault <- BlockVersityToken.createEmptyVault()
         self.fusdVault <- FUSD.createEmptyVault()
         let admin <- create Admin()
         self.account.save(<- admin, to: self.SaleAdminStoragePath)

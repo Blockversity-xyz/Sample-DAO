@@ -190,7 +190,7 @@ pub contract GovernanceTokenPublicSale {
     self.tokenName = "Example Governance Token"
     self.tokenSymbol = "GVT"
     // Total supply of GVT is 300M
-    self.tokenSupply = 300_000_000.0
+    self.tokenSupply = 600_000_000.0
     // For each 1FUSD buyers get 4GVT
     self.tokenPrice = 0.25
     self.saleStart = getCurrentBlock().timestamp

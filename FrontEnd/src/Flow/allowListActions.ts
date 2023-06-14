@@ -20,7 +20,7 @@ import { getAllAddresses as getAllAddressesScript } from "./Scripts/get_all_addr
 import { getUserTimestamp as getUserTimestampScript } from "./Scripts/get_user_timestamp";
 
 // ICO Scripts
-import { getSTBalance as getSTBalanceScript } from "./Scripts/ICO/getST_Balance";
+import { getBVTBalance as getBVTBalanceScript } from "./Scripts/ICO/getBVT_Balance";
 import { getFUSDVaultBalance as getFUSDVaultBalanceScript } from "./Scripts/ICO/getFUSDVaultBalance";
 import { getIsSaleActive as getIsSaleActiveScript } from "./Scripts/ICO/getIsSaleActive";
 import { getPurchaseInfo as getPurchaseInfoScript } from "./Scripts/ICO/getPurchaseInfo";

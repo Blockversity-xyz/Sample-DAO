@@ -1,8 +1,18 @@
-<a href="https://www.blockversity.xyz/" target="_blank">
-    <img src="https://www.blockversity.xyz/img/logo-1-1@1x.png" alt="Sample logo" title="Sample" align="right" height="40" />
-</a>
+
+```Flow testnet commands:
+flow project deploy --network=testnet ,
+
+flow accounts create --key YOUR_PRIVATE_KEY --host access.devnet.nodes.onflow.org:9000 --signer YOUR_ACCOUNT_ADDRESS
+
+flow transactions send ./transactions/ExampleDAO/ExampleDAO.cdc --network=testnet --signer=testnet-account
+
+flow scripts execute ./scripts/ExampleDAO/ExampleDAO.cdc --network=testnet
+
+flow accounts update-contract ExampleDAO ./contracts/DAO/AdminExampleDAO.cdc --network=testnet --signer=testnet-account
+```
 
 # Sample-DAO
+
 
 [Sample](https://www.blockversity.xyz/) is THE platform agnostic community for online educators supported by a DAO. Sample's objective is to serve online educators with NFTs as a service,  giving power back to Course Creators and verifiable on-chain credentials to students.
 
@@ -66,5 +76,24 @@ To test the contracts go to the Cadence folder `cd Cadence` and run the below co
 
 ```
 go run ./tasks/main.go
+
 ```
+
+## Testnet
+
+To deploy the contracts to the testnet, you need to have a testnet account. You can create one using the [Flow CLI](https://docs.onflow.org/flow-cli).
+Command to deploy contracts to testnet
+
+```sh
+flow project deploy --network testnet
+```
+
+```sh
+flow accounts create \
+  --key YOUR_PRIVATE_KEY \
+  --host access.devnet.nodes.onflow.org:9000 \
+  --signer YOUR_ACCOUNT_ADDRESS
+```
+
+
 

@@ -18,7 +18,7 @@ const initialFormData: SellTokensFormData = {
     maxCap: 100000,
     startDate: new Date(),
     endDate: new Date(),
-    tokenPrice: 1,
+    tokenPrice: 1.0000,
     lockup: 0,
 };
 
@@ -42,7 +42,7 @@ export default function SellTokensForm() {
 
         <form className="w-full max-w-screen-xl mx-auto px-6 py-8" onSubmit={handleSubmit}>
             <div className="flex flex-wrap -mx-4">
-                <div className="w-full md:w-1/3 px-4 mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 px-4 mb-6 md:mb-0">
                     <h2 className="text-2xl mb-2 font-medium">Token Supply</h2>
                     <div className="bg-gray-100 rounded-lg p-4">
                         <div className="text-lg mb-2">
@@ -63,7 +63,7 @@ export default function SellTokensForm() {
                         </div>
                     </div>
                 </div>
-                <div className="w-full md:w-1/3 px-4 mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 px-4 mb-6 md:mb-0">
                     <h2 className="text-2xl mb-2 font-medium">Token Sale</h2>
                     <div className="bg-gray-100 rounded-lg p-4">
                         <div className="text-lg mb-2">
@@ -128,7 +128,7 @@ export default function SellTokensForm() {
                         </div>
                         <div className="text-lg mb-2">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="lockup">
-                                Lockup
+                                Lockup(Days)
                             </label>
                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                 id="lockup"

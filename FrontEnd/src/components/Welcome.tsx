@@ -1,7 +1,7 @@
 /** @format */
 
 import { signWhitelist, getAllAddresses } from "../Flow/allowListActions";
-import { purchaseST, setupST } from "../Flow/ICOActions";
+import { purchaseBVT, setupBVT } from "../Flow/ICOActions";
 import { useEffect, useState } from "react";
 import { currentUser } from "../Flow/allowListActions";
 import { Link } from 'react-router-dom';

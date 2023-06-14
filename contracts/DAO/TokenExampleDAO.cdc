@@ -1,19 +1,10 @@
-import NonFungibleToken from 0x631e88ae7f1d7c20
-import FungibleToken from 0x9a0766d93b6608b7
-import GovernanceToken from 0x800a10d0fff7acd4
 
-pub contract ExampleDAO {
+pub contract TokenExampleDAO {
   access(contract) var Proposals: [Proposal]
   access(contract) var votedRecords: [{ Address: Int }]
   access(contract) var totalProposals: Int
 
-  pub let AdminStoragePath: StoragePath;
   pub let ProposerStoragePath: StoragePath;
-  // The storage Path for Proposers' ProposerProxy
-  pub let ProposerProxyStoragePath: StoragePath
-  // The public path for Proposers' ProposerProxy capability
-  pub let ProposerProxyPublicPath: PublicPath
-  // Admin resourse holder can create Proposers
   pub let VoterStoragePath: StoragePath;
   pub let VoterPublicPath: PublicPath;
   pub let VoterPath: PrivatePath;
@@ -23,12 +14,14 @@ pub contract ExampleDAO {
   pub event ProposalCreated(Title: String, Proposer: Address, MinHoldedGVTAmount: UFix64?)
   pub event VoteSubmitted(Voter: Address, ProposalId: Int, OptionIndex: Int)
 
-  pub resource Admin {
-    pub fun createProposer(): @ExampleDAO.Proposer {
-      return <- create Proposer()
+
+
+    // Function to allow users to claim a proposer resource
+    pub fun claimProposer(): @TokenExampleDAO.Proposer {
+        return <- create Proposer()
     }
-  }
-  
+
+
 
   // Proposer
     //
@@ -48,7 +41,7 @@ pub contract ExampleDAO {
         minHoldedGVTAmount: UFix64?
         ) {
 
-        ExampleDAO.Proposals.append(Proposal(
+        TokenExampleDAO.Proposals.append(Proposal(
          proposer: self.owner!.address,
          title: title,
          description: description,
@@ -58,8 +51,8 @@ pub contract ExampleDAO {
          minHoldedGVTAmount: minHoldedGVTAmount
         ))
 
-        ExampleDAO.votedRecords.append({})
-        ExampleDAO.totalProposals = ExampleDAO.totalProposals + 1
+        TokenExampleDAO.votedRecords.append({})
+        TokenExampleDAO.totalProposals = TokenExampleDAO.totalProposals + 1
       }
 
       pub fun updateProposal(
@@ -72,10 +65,10 @@ pub contract ExampleDAO {
         ) {
 
         pre {
-          ExampleDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
+          TokenExampleDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
         }
 
-        ExampleDAO.Proposals[id].update(
+        TokenExampleDAO.Proposals[id].update(
           title: title,
           description: description,
           startAt: startAt,
@@ -85,70 +78,13 @@ pub contract ExampleDAO {
       }
      }
 
-    pub resource interface ProposerProxyPublic {
-        pub fun setProposerCapability(capability: Capability<&Proposer>)
-    }
+
     // ProposerProxy
     //
     // Resource object holding a capability that can be used to create new proposals.
     // The resource that this capability represents can be deleted by the admin
     // in order to unilaterally revoke proposer capability if needed.
-    pub resource ProposerProxy: ProposerProxyPublic {
-        // access(self) so nobody else can copy the capability and use it.
-        access(self) var ProposerCapability: Capability<&Proposer>?
-        // Anyone can call this, but only the admin can create Proposer capabilities,
-        // so the type system constrains this to being called by the admin.
-        pub fun setProposerCapability(capability: Capability<&Proposer>) {
-            self.ProposerCapability = capability
-        }
 
-        pub fun addProposal(
-          _title: String,
-          _description: String,
-          _options: [String],
-          _startAt: UFix64?,
-          _endAt: UFix64?,
-          _minHoldedGVTAmount: UFix64?
-          ): Void? {
-
-            return self.ProposerCapability
-            ?.borrow()!
-            ?.addProposal(
-              title: _title,
-              description: _description,
-              options: _options,
-              startAt: _startAt,
-              endAt: _endAt,
-              minHoldedGVTAmount: _minHoldedGVTAmount
-              )
-        }
-
-        pub fun updateProposal(
-          id: Int,
-          title: String?,
-          description: String?,
-          startAt: UFix64?,
-          endAt: UFix64?,
-          voided: Bool?
-          ) {
-
-          return self.ProposerCapability!
-          .borrow()!
-          .updateProposal(
-            id: id,
-            title: title,
-            description: description,
-            startAt: startAt,
-            endAt: endAt,
-            voided: voided
-            )
-        }
-
-        init () {
-          self.ProposerCapability = nil
-        }
-
-    }
     // createProposerProxy
     //
     // Function that creates a ProposerProxy.
@@ -156,9 +92,6 @@ pub contract ExampleDAO {
     // create proposals without a Proposer capability,
     // and only the admin can provide that.
     //
-    pub fun createProposerProxy(): @ProposerProxy {
-        return <- create ProposerProxy()
-    }
 
   pub resource interface VoterPublic {
     // voted Proposal id <-> options index mapping
@@ -173,9 +106,9 @@ pub contract ExampleDAO {
     pub fun vote(ProposalId: UInt64, optionIndex: Int) {
       pre {
         self.records[ProposalId] == nil: "Already voted"
-        optionIndex < ExampleDAO.Proposals[ProposalId].options.length: "Invalid option"
+        optionIndex < TokenExampleDAO.Proposals[ProposalId].options.length: "Invalid option"
       }
-      ExampleDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
+      TokenExampleDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
       self.records[ProposalId] = optionIndex
     };
 
@@ -226,7 +159,7 @@ pub contract ExampleDAO {
         self.votesCountActual.append(0)
       }
 
-      self.id = ExampleDAO.totalProposals
+      self.id = TokenExampleDAO.totalProposals
 
       self.sealed = false
       self.countIndex = 0
@@ -262,14 +195,14 @@ pub contract ExampleDAO {
       pre {
         self.isStarted(): "Vote not started"
         !self.isEnded(): "Vote ended"
-        ExampleDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
+        TokenExampleDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
       }
 
-      let voterGVT = ExampleDAO.getHoldedGVT(address: voterAddr)
+      let voterGVT = TokenExampleDAO.getHoldedGVT(address: voterAddr)
 
       assert(voterGVT >= self.minHoldedGVTAmount, message: "Not enought GVT in your Vault to vote")
 
-      ExampleDAO.votedRecords[self.id][voterAddr] = optionIndex
+      TokenExampleDAO.votedRecords[self.id][voterAddr] = optionIndex
 
       emit VoteSubmitted(Voter: voterAddr, ProposalId: self.id, OptionIndex: optionIndex)
     }
@@ -283,7 +216,7 @@ pub contract ExampleDAO {
         return self.votesCountActual
       }
       // Fetch the keys of everyone who has voted on this proposal
-      let votedList = ExampleDAO.votedRecords[self.id].keys
+      let votedList = TokenExampleDAO.votedRecords[self.id].keys
       // Count from the last time you counted
       var batchEnd = self.countIndex + size
       // If the count index is bigger than the number of voters
@@ -294,7 +227,7 @@ pub contract ExampleDAO {
 
       while self.countIndex != batchEnd {
         let address = votedList[self.countIndex]
-        let votedOptionIndex = ExampleDAO.votedRecords[self.id][address]!
+        let votedOptionIndex = TokenExampleDAO.votedRecords[self.id][address]!
         self.votesCountActual[votedOptionIndex] = self.votesCountActual[votedOptionIndex] + 1
 
         self.countIndex = self.countIndex + 1
@@ -314,17 +247,14 @@ pub contract ExampleDAO {
     }
 
     pub fun getTotalVoted(): Int {
-      return ExampleDAO.votedRecords[self.id].keys.length
+      return TokenExampleDAO.votedRecords[self.id].keys.length
     }
   }
 
   pub fun getHoldedGVT(address: Address): UFix64 {
-    let acct = getAccount(address)
-    let vaultRef = acct.getCapability(GovernanceToken.VaultPublicPath)
-        .borrow<&GovernanceToken.Vault{FungibleToken.Balance}>()
-        ?? panic("Could not borrow Balance reference to the Vault")
+    let acct = 10.0
 
-    return vaultRef.balance
+    return acct
   }
 
   pub fun getProposals(): [Proposal] {
@@ -343,7 +273,7 @@ pub contract ExampleDAO {
     return self.Proposals[ProposalId].count(size: maxSize)
   }
 
-  pub fun initVoter(): @ExampleDAO.Voter {
+  pub fun initVoter(): @TokenExampleDAO.Voter {
     return <- create Voter()
   }
 
@@ -352,18 +282,15 @@ pub contract ExampleDAO {
     self.votedRecords = []
     self.totalProposals = 0
 
-    self.AdminStoragePath = /storage/ExampleDAOAdmin
-    self.ProposerStoragePath = /storage/ExampleDAOProposer
-    self.ProposerProxyPublicPath = /public/ExampleDAOProposerProxy
-    self.ProposerProxyStoragePath = /storage/ExampleDAOProposerProxy
-    self.VoterStoragePath = /storage/ExampleDAOVoter
-    self.VoterPublicPath = /public/ExampleDAOVoter
-    self.VoterPath = /private/ExampleDAOVoter
+ 
+    self.ProposerStoragePath = /storage/TokenExampleDAOProposer
+    self.VoterStoragePath = /storage/TokenExampleDAOVoter
+    self.VoterPublicPath = /public/TokenExampleDAOVoter
+    self.VoterPath = /private/TokenExampleDAOVoter
 
-    self.account.save(<-create Admin(), to: self.AdminStoragePath)
     self.account.save(<-create Proposer(), to: self.ProposerStoragePath)
     self.account.save(<-create Voter(), to: self.VoterStoragePath)
-    self.account.link<&ExampleDAO.Voter>(
+    self.account.link<&TokenExampleDAO.Voter>(
             self.VoterPublicPath,
             target: self.VoterStoragePath
         )

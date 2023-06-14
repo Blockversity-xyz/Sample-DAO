@@ -1,9 +1,9 @@
 export const getPurchaseInfo = () => {
   return `
-import SampleTokenPublicSale from 0x49a232bb31e5dd58
+import BlockVersityTokenPublicSale from 0x49a232bb31e5dd58
 
-pub fun main(address: Address): SampleTokenPublicSale.PurchaseInfo? {
-    return SampleTokenPublicSale.getPurchase(address: address)
+pub fun main(address: Address): BlockVersityTokenPublicSale.PurchaseInfo? {
+    return BlockVersityTokenPublicSale.getPurchase(address: address)
 }
   `
 }

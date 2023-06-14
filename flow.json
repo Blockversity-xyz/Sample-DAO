@@ -1,3 +1,4 @@
+
 {
 	"emulators": {
 		"default": {
@@ -8,29 +9,16 @@
 	"contracts": {
 		"Debug": "./contracts/utility/Debug.cdc",
 		"testFT": "./contracts/utility/testFT.cdc",
-		"Whitelist": "./contracts/Whitelist.cdc",
+		"Whitelist": "./contracts/AllowList.cdc",
 		"GovernanceTokenSale": "./contracts/sales/GovernanceTokenSale.cdc",
-		"GovernanceToken": {
-			"source": "./contracts/GovernanceToken.cdc",
-			"aliases": {
-				"testnet": "0x800a10d0fff7acd4"
-			}
-		},
-		"FungibleTokenMetadataViews": {
-			"source": "./contracts/utility/FungibleTokenMetadataViews.cdc",
-			"aliases": {
-				"testnet": "0x9a0766d93b6608b7"
-			}
-		},
+		"GovernanceToken":  "./contracts/GovernanceToken.cdc",
+		
+
+		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
 		"exampleToken": "./contracts/exampleToken.cdc",
-		"FungibleToken": {
-			"source": "./contracts/utility/FungibleToken.cdc",
-			"aliases": {
-				"testnet": "9a0766d93b6608b7",
-				"emulator": "ee82856bf20e2aa6",
-				"mainnet": "0xf233dcee88fe0abe"
-			}
-		},
+		"ExampleDAO": "./contracts/DAO/FlowExampleDAO.cdc",
+		"TokenExampleDAO": "./contracts/DAO/TokenExampleDAO.cdc",
+		"FungibleToken": "./contracts/utility/FungibleToken.cdc",
 		"FUSD": {
 			"source": "./contracts/utility/FUSD.cdc",
 			"aliases": {
@@ -67,13 +55,13 @@
 	},
 	"accounts": {
 		"testnet-account": {
-			"address": "0x800a10d0fff7acd4",
+			"address": "0x3c407ff30723099a",
 			"key": {
 				"type": "hex",
 				"index": 0,
-				"signatureAlgorithm": "ECDSA_P256",
+				"signatureAlgorithm": "ECDSA_secp256k1",
 				"hashAlgorithm": "SHA3_256",
-				"privateKey": "077a4268773503750e1ad2757f3f6768ff73ef03c3410e2e7e4e027ca43b2a04"
+				"privateKey": "f9bcd0de16c6c694b7fd72e6082c328e53a1c0526286f6bd09563c7ecebca6fd"
 			}
 		},
 		"emulator-account": {
@@ -125,7 +113,7 @@
 		},
 		"testnet": {
 			"testnet-account": [
-				"GovernanceTokenSale"
+				"TokenExampleDAO"
 			]
 		},
 		"mainnet": {

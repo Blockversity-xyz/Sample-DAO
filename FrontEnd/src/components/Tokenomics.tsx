@@ -78,30 +78,6 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
                             </h1>
                         </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-between items-center mt-8">
-                        <div className="flex flex-col">
-                            <PieChart width={400} height={400}>
-                                <Pie
-                                    data={data}
-                                    cx={200}
-                                    cy={200}
-                                    labelLine={false}
-                                    label={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
-                                    {data.map((entry, index) => (
-                                        <Cell
-                                            key={`cell-${index}`}
-                                            fill={COLORS[index % COLORS.length]}
-                                        />
-                                    ))}
-                                </Pie>
-                                <Legend />
-                            </PieChart>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
