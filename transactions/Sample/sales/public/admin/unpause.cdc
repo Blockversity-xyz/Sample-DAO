@@ -1,14 +1,14 @@
-import SampleTokenPublicSale from "../../../../../contracts/sales/SampleTokenPublicSale.cdc"
+import GovTokenPublicSale from "../../../../../contracts/sales/GovTokenPublicSale.cdc"
 
 transaction() {
 
     // The reference to the Admin Resource
-    let adminRef: &SampleTokenPublicSale.Admin
+    let adminRef: &GovTokenPublicSale.Admin
 
     prepare(account: AuthAccount) {
 
         // Get admin reference
-        self.adminRef = account.borrow<&SampleTokenPublicSale.Admin>(from: SampleTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = account.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
 			?? panic("Could not borrow reference to the admin!")
     }
 

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import CreateToken from "./CreateToken";
-import SellToken from "./SellToken";
-import ManageToken from "./ManageToken";
-import ICO from "./ICO";
-import Tokennomics from "./Tokenomics";
-import PurchaserList from "./PurchaserList";
+import CreateToken from "./Admin/CreateToken";
+import SellToken from "./Admin/SellToken";
+import ManageToken from "./Admin/ManageToken";
+import ICO from "./Admin/ICO";
+import Tokennomics from "./Admin/Tokenomics";
+import PurchaserList from "./Admin/PurchaserList";
 
 type Tokenomics = {
   name: string;
@@ -46,12 +46,12 @@ const AdminDashboard: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Admin</h2>
           <div className="flex flex-wrap justify-center">
             <div className={`flex-grow ${isManageAccountActive ? "" : "hidden"}`}>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Managed account</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Manage account</h3>
               <button
                 className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "createToken" ? "btn-primary text-green-500" : ""}`}
                 onClick={() => handleTabClick("createToken")}
               >
-                Create Token
+                Mint Token
               </button>
               <button
                 className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "sellToken" ? "btn-primary text-green-500" : ""}`}

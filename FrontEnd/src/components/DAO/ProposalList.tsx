@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { getProposals } from "../Flow/GovernanceActions";
+import { getProposals } from "../../Flow/GovernanceActions";
 
 
 type Proposal = {

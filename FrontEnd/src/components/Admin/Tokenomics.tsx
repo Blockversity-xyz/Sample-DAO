@@ -1,5 +1,5 @@
-import React from 'react';
-import { PieChart, Pie, Cell, Legend } from 'recharts';
+import React, { useState, useEffect } from "react";
+import { getSaleInfo, getPurchasers } from "../../Flow/ICOActions";
 
 type Tokenomics = {
     name: string;
@@ -11,16 +11,19 @@ type Tokenomics = {
 };
 
 
-const data = [
-    { name: 'Burned Tokens', value: 20 },
-    { name: 'Team Tokens', value: 20 },
-    { name: 'Marketing Tokens', value: 10 },
-    { name: 'Community Tokens', value: 50 },
-];
-
-const COLORS = ['#FF5C5C', '#FFC93C', '#1CB0F6', '#2ED47A'];
 
 const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
+    const [tokenInfo, setTokenInfo] = useState<any>({});
+    const [purchasers, setPurchasers] = useState<string[]>([]);
+
+    useEffect(() => {
+        getSaleInfo().then((info) => {
+            setTokenInfo(info);
+        });
+        getPurchasers().then((addresses) => {
+            setPurchasers(addresses);
+        });
+    }, []);
     return (
         <div className="flex justify-center">
             <div className="w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12">
@@ -28,15 +31,15 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
                     <div className="flex flex-col sm:flex-row justify-between items-center">
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                {tokenomics.name}
+                                {tokenInfo.tokenName}
                             </h1>
                             <p className="text-sm text-gray-500">
-                                {tokenomics.symbol}
+                                {tokenInfo.tokenSymbol}
                             </p>
                         </div>
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                {tokenomics.price}
+                                {tokenInfo.tokenPrice}
                             </h1>
                             <p className="text-sm text-gray-500">Price</p>
                         </div>
@@ -50,7 +53,7 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
                     <div className="flex flex-col sm:flex-row justify-between items-center mt-8">
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                {tokenomics.address}
+                                {tokenInfo.address}
                             </h1>
                             <p className="text-sm text-gray-500">Address</p>
                         </div>
@@ -64,18 +67,9 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
                         </div>
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                {tokenomics.maxSupply}
+                                {tokenInfo.tokenSupply}
                             </h1>
                             <p className="text-sm text-gray-500">Max Supply</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white p-8 rounded-lg shadow-md mt-8">
-                    <div className="flex flex-col sm:flex-row justify-between items-center">
-                        <div className="flex flex-col">
-                            <h1 className="text-2xl font-bold text-gray-800">
-                                Tokenomics
-                            </h1>
                         </div>
                     </div>
                 </div>

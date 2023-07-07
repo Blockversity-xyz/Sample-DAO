@@ -1,12 +1,14 @@
 /** @format */
-// old contact addr 0x800a10d0fff7acd4
 
-import { Welcome, Admin } from "./components";
+import React from "react";
+import Welcome from "./components/Welcome";
+import Admin from "./components/Admin";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ProposalList from "./components/ProposalList";
-import CreateProposal from "./components/CreateProposal";
+import ProposalList from "./components/DAO/ProposalList";
+import CreateProposal from "./components/DAO/CreateProposal";
 import Sidebar from "./components/Sidebar";
-import Vote from "./components/Vote";
+import Vote from "./components/DAO/Vote";
+import PurchaseToken from "./components/PurchaseToken";
 
 
 const App: React.FC = () => (
@@ -30,6 +32,11 @@ const App: React.FC = () => (
             <Route
               path='/proposal'
               element={<ProposalList />}
+            />
+
+            <Route
+              path='/purchase'
+              element={<PurchaseToken />}
             />
 
             <Route

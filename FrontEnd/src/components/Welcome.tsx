@@ -6,10 +6,9 @@ import { useEffect, useState } from "react";
 import { currentUser } from "../Flow/allowListActions";
 import { Link } from 'react-router-dom';
 import { setProxy, depositProposer } from "../Flow/GovernanceActions";
-
-const companyCommonStyles =
-  "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
-
+import { setTokenAdmin } from "../Flow/ICOActions";
+import { setup_fusd } from "../Flow/ICOActions";
+import { addAdmin } from "../Flow/ICOActions";
 interface InputProps {
   placeholder: string;
   name: string;
@@ -54,6 +53,37 @@ const Welcome: React.FC = () => {
     } catch (error) {
       console.log(error);
       alert('Error setting proxy.');
+    }
+  };
+
+  const handleSetFUSDClick = async () => {
+    try {
+      await setup_fusd();
+      alert('FUSD set successfully!');
+    } catch (error) {
+      console.log(error);
+      alert('Error setting FUSD.');
+    }
+  };
+
+  const handleSetTokenAdminClick = async () => {
+    try {
+      await setTokenAdmin();
+      alert('You are now a token Admin!');
+    } catch (error) {
+      console.log(error);
+      alert('Error becoming Admin.');
+    }
+  };
+
+
+  const handleaddAdminClick = async () => {
+    try {
+      await addAdmin();
+      alert('change launch details Admin!');
+    } catch (error) {
+      console.log(error);
+      alert('Error becoming Admin launch details.');
     }
   };
 
@@ -102,6 +132,32 @@ const Welcome: React.FC = () => {
               onClick={handleSetProxyClick}
             >
               Setup Account
+            </button>
+
+            <br />
+            <button
+              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
+              onClick={handleSetFUSDClick}
+            >
+              Setup FUSD
+            </button>
+
+          </div>
+          <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
+            <button
+              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
+              onClick={handleSetTokenAdminClick}
+            >
+              Become Token Admin
+            </button>
+
+          </div>
+          <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
+            <button
+              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
+              onClick={handleaddAdminClick}
+            >
+              Become sale Admin
             </button>
 
           </div>

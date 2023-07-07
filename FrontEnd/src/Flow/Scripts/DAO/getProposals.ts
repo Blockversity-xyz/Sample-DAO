@@ -2,10 +2,10 @@
 
 export const getProposals = () => {
   return `
-import ExampleDAO from 0x800a10d0fff7acd4
+import TokenExampleDAO from 0x3c407ff30723099a
 
-pub fun main(): [ExampleDAO.Proposal] {
-  return ExampleDAO.getProposals()
+pub fun main(): [TokenExampleDAO.Proposal] {
+  return TokenExampleDAO.getProposals()
 }
   `;
 };

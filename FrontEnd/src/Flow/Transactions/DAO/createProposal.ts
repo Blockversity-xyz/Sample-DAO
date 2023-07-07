@@ -2,40 +2,28 @@
 
 export const createProposal = () => {
   return `
-import ExampleDAO from 0x800a10d0fff7acd4
+import TokenExampleDAO from 0x3c407ff30723099a
 
-transaction(
-  title: String,
-  description: String,
-  options: [String],
-  startAt: UFix64,
-  endAt: UFix64,
-  minHoldedGVTAmount: UFix64?
-  ) {
-  let proposer: &ExampleDAO.ProposerProxy?
-  let minHoldedSTAmount:UFix64?
+transaction(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedGVTAmount: UFix64?) {
+  let proposer: &TokenExampleDAO.Proposer
 
   prepare(signer: AuthAccount) {
-    self.proposer = signer
-        .borrow<&ExampleDAO.ProposerProxy>(from: ExampleDAO.ProposerProxyStoragePath)
-        ?? panic("No Proposer Proxy available")
-
-
-    self.minHoldedSTAmount = minHoldedGVTAmount != nil ? minHoldedGVTAmount! : 0.0
+    // Access the Proposer resource
+    self.proposer = signer.borrow<&TokenExampleDAO.Proposer>(from: /storage/Proposer)
+      ?? panic("Could not borrow reference to the Proposer")
   }
-
-
 
   execute {
-    self.proposer?.addProposal(
-      _title: title,
-      _description: description,
-      _options: options,
-      _startAt: startAt,
-      _endAt: endAt,
-      _minHoldedGVTAmount: self.minHoldedSTAmount
-    ) ?? panic("No proposer Resource deposited yet")
+    self.proposer.addProposal(
+      title: title,
+      description: description,
+      options: options,
+      startAt: startAt,
+      endAt: endAt,
+      minHoldedGVTAmount: minHoldedGVTAmount
+    )
   }
 }
+
   `;
 };

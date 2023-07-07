@@ -39,11 +39,19 @@ const Sidebar: React.FC = () => {
                         Create Proposal
                     </Link>
                     <Link
+                        to="/purchase"
+                        className="block py-2 px-4 text-white hover:text-green-500"
+                    >
+                        Purchase Tokens
+                    </Link>
+
+                    <Link
                         to="/admin"
                         className="block py-2 px-4 text-white  hover:text-green-500"
                     >
                         Admin
                     </Link>
+
 
                 </div>
 

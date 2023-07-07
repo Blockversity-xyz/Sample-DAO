@@ -1,16 +1,16 @@
 import FungibleToken from "../../../../../contracts/utility/FungibleToken.cdc"
 import FUSD from "../../../../../contracts/utility/FUSD.cdc"
-import SampleTokenPublicSale from "../../../../../contracts/sales/SampleTokenPublicSale.cdc"
+import GovTokenPublicSale from "../../../../../contracts/sales/GovTokenPublicSale.cdc"
 
 transaction(amount: UFix64, to: Address) {
 
     // The reference to the Admin Resource
-    let adminRef: &SampleTokenPublicSale.Admin
+    let adminRef: &GovTokenPublicSale.Admin
 
     prepare(signer: AuthAccount) {
 
         // Get admin reference
-        self.adminRef = signer.borrow<&SampleTokenPublicSale.Admin>(from: SampleTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = signer.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
 			?? panic("Could not borrow reference to the admin!")
     }
 

@@ -1,11 +1,11 @@
 /** @format */
 
 import React, { useState } from "react";
-import { vote } from "../Flow/GovernanceActions";
-import sellToken from "./SellToken";
+import { vote } from "../../Flow/GovernanceActions";
+import sellToken from "../Admin/SellToken";
 
 interface VoteProps {
-  proposalId: number;
+  proposalId: number; // Change the type to number
   tokensOwned: number;
   onVote: (proposalId: number, vote: boolean) => void;
 }

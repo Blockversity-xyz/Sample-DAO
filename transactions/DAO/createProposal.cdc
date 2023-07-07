@@ -1,26 +1,22 @@
-import ExampleDAO from "../../contracts/DAO/ExampleDAO.cdc"
+import ExampleDAO from 0x01
 
-transaction(_title: String, _description: String, _options: [String], _startAt: UFix64, _endAt: UFix64, _minHoldedGVTAmount: UFix64?) {
+transaction(title: String, description: String, options: [String], startAt: UFix64?, endAt: UFix64?, minHoldedGVTAmount: UFix64?) {
   let proposer: &ExampleDAO.Proposer
-  let minHoldedSTAmount:UFix64?
 
   prepare(signer: AuthAccount) {
-    self.proposer = signer.getCapability(/private/ExampleDAOProposer).borrow<&ExampleDAO.Proposer>()
-	    ?? panic("Could not borrow reference")
-
-    self.minHoldedSTAmount = _minHoldedGVTAmount != nil ? _minHoldedGVTAmount! : 0.0
+    // Access the Proposer resource
+    self.proposer = signer.borrow<&ExampleDAO.Proposer>(from: ExampleDAO.ProposerStoragePath)
+      ?? panic("Could not borrow reference to Proposer")
   }
-
-
 
   execute {
     self.proposer.addProposal(
-      title: _title,
-      description: _description,
-      options: _options,
-      startAt: _startAt,
-      endAt: _endAt,
-      minHoldedGVTAmount: self.minHoldedSTAmount
+      title: title,
+      description: description,
+      options: options,
+      startAt: startAt,
+      endAt: endAt,
+      minHoldedGVTAmount: minHoldedGVTAmount
     )
   }
 }

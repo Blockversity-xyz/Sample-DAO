@@ -2,7 +2,7 @@ export const contractCode =  () => {
   return `
 import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import BlockVersityToken from "../BlockVersityToken.cdc"
+import GovernanceToken from "../GovernanceToken.cdc"
 import FUSD from 0xe223d8a629e49c68
 
 pub contract ExamplePublicSale {
@@ -27,7 +27,7 @@ pub contract ExamplePublicSale {
     /****** Sale Resources ******/
 
     // BVT holder vault
-    access(contract) let bvtVault: @BlockVersityToken.Vault
+    access(contract) let bvtVault: @GovernanceToken.Vault
 
     // FUSD holder vault
     access(contract) let fusdVault: @FUSD.Vault
@@ -85,7 +85,7 @@ pub contract ExamplePublicSale {
     }
 
     // BVT purchase method
-    // User pays FUSD and get unlocked BlockVersityToken
+    // User pays FUSD and get unlocked GovernanceToken
     pub fun purchase(from: @FUSD.Vault, address: Address) {
         pre {
             self.isSaleActive: "Token sale is not active"
@@ -154,9 +154,9 @@ pub contract ExamplePublicSale {
                 ExamplePublicSale.purchases[address]?.state == PurchaseState.initial: "Already distributed or refunded"
             }
 
-            let receiverRef = getAccount(address).getCapability(BlockVersityToken.ReceiverPublicPath)
+            let receiverRef = getAccount(address).getCapability(GovernanceToken.ReceiverPublicPath)
                 .borrow<&{FungibleToken.Receiver}>()
-                ?? panic("Could not borrow BlockVersityToken receiver reference")
+                ?? panic("Could not borrow GovernanceToken receiver reference")
 
             let purchaseInfo = ExamplePublicSale.purchases[address]
                 ?? panic("Count not get purchase info for the address")
@@ -264,10 +264,10 @@ pub contract ExamplePublicSale {
         self.purchases = {}
         self.SaleAdminStoragePath = /storage/ExamplePublicSaleAdmin
 
-        self.bvtVault <- BlockVersityToken.createEmptyVault()
+        self.bvtVault <- GovernanceToken.createEmptyVault()
         self.fusdVault <- FUSD.createEmptyVault()
         let admin <- create Admin()
-        self.account.save(<- admin, to: self.SaleAdminStoragePath)
+        self.account.save(<-admin, to: self.SaleAdminStoragePath)
     }
 }
 `

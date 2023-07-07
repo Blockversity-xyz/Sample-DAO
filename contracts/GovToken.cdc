@@ -1,11 +1,11 @@
-import FungibleToken from "./utility/FungibleToken.cdc"
-import MetadataViews from "./utility/MetadataViews.cdc"
-import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
+import FungibleToken from 0x9a0766d93b6608b7
+import MetadataViews from 0x631e88ae7f1d7c20
+import FungibleTokenMetadataViews from 0x9a0766d93b6608b7
 
-// Token contract for GovernanceToken (GVT)
-pub contract GovernanceToken: FungibleToken {
+// Token contract for GovToken (GVT)
+pub contract GovToken: FungibleToken {
 
-    /// Total supply of GovernanceTokens in existence
+    /// Total supply of GovTokens in existence
     pub var totalSupply: UFix64
 
     /// Storage and Public Paths
@@ -80,7 +80,7 @@ pub contract GovernanceToken: FungibleToken {
         /// @param from: The Vault resource containing the funds that will be deposited
         ///
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @GovernanceToken.Vault
+            let vault <- from as! @GovToken.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -89,11 +89,11 @@ pub contract GovernanceToken: FungibleToken {
 
         destroy() {
             if self.balance > 0.0 {
-                GovernanceToken.totalSupply = GovernanceToken.totalSupply - self.balance
+                GovToken.totalSupply = GovToken.totalSupply - self.balance
             }
         }
 
-        /// The way of getting all the Metadata Views implemented by GovernanceToken
+        /// The way of getting all the Metadata Views implemented by GovToken
         ///
         /// @return An array of Types defining the implemented views. This value will be used by
         ///         developers to know which parameter to pass to the resolveView() method.
@@ -104,7 +104,7 @@ pub contract GovernanceToken: FungibleToken {
                     Type<FungibleTokenMetadataViews.FTVaultData>()]
         }
 
-        /// The way of getting a Metadata View out of the GovernanceToken
+        /// The way of getting a Metadata View out of the GovToken
         ///
         /// @param view: The Type of the desired view.
         /// @return A structure representing the requested view.
@@ -139,15 +139,15 @@ pub contract GovernanceToken: FungibleToken {
                     )
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
                     return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: GovernanceToken.VaultStoragePath,
-                        receiverPath: GovernanceToken.ReceiverPublicPath,
-                        metadataPath: GovernanceToken.VaultPublicPath,
-                        providerPath: /private/GovernanceTokenVault,
-                        receiverLinkedType: Type<&GovernanceToken.Vault{FungibleToken.Receiver}>(),
-                        metadataLinkedType: Type<&GovernanceToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
-                        providerLinkedType: Type<&GovernanceToken.Vault{FungibleToken.Provider}>(),
+                        storagePath: GovToken.VaultStoragePath,
+                        receiverPath: GovToken.ReceiverPublicPath,
+                        metadataPath: GovToken.VaultPublicPath,
+                        providerPath: /private/GovTokenVault,
+                        receiverLinkedType: Type<&GovToken.Vault{FungibleToken.Receiver}>(),
+                        metadataLinkedType: Type<&GovToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
+                        providerLinkedType: Type<&GovToken.Vault{FungibleToken.Provider}>(),
                         createEmptyVaultFunction: (fun (): @FungibleToken.Vault {
-                            return <-GovernanceToken.createEmptyVault()
+                            return <-GovToken.createEmptyVault()
                         })
                     )
             }
@@ -164,6 +164,10 @@ pub contract GovernanceToken: FungibleToken {
     ///
     pub fun createEmptyVault(): @Vault {
         return <-create Vault(balance: 0.0)
+    }
+
+      pub fun claimAdmin(): @GovToken.Administrator {
+        return <- create Administrator()
     }
 
     pub resource Administrator {
@@ -186,6 +190,13 @@ pub contract GovernanceToken: FungibleToken {
             emit BurnerCreated()
             return <-create Burner()
         }
+        
+    }
+
+ /// Function to create and send an Administrator resource to another account
+
+    pub fun claimAdminGVT(): @GovToken.Administrator {
+        return <- create Administrator()
     }
 
     /// Resource object that token admin accounts can hold to mint new tokens.
@@ -201,12 +212,12 @@ pub contract GovernanceToken: FungibleToken {
         /// @param amount: The quantity of tokens to mint
         /// @return The Vault resource containing the minted tokens
         ///
-        pub fun mintTokens(amount: UFix64): @GovernanceToken.Vault {
+        pub fun mintTokens(amount: UFix64): @GovToken.Vault {
             pre {
                 amount > 0.0: "Amount minted must be greater than zero"
                 amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
             }
-            GovernanceToken.totalSupply = GovernanceToken.totalSupply + amount
+            GovToken.totalSupply = GovToken.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -229,7 +240,7 @@ pub contract GovernanceToken: FungibleToken {
         /// @param from: The Vault resource containing the tokens to burn
         ///
         pub fun burnTokens(from: @FungibleToken.Vault) {
-            let vault <- from as! @GovernanceToken.Vault
+            let vault <- from as! @GovToken.Vault
             let amount = vault.balance
             destroy vault
             emit TokensBurned(amount: amount)
@@ -238,12 +249,12 @@ pub contract GovernanceToken: FungibleToken {
 
     init() {
         // Total supply of GVT is 300M
-        self.totalSupply = 300_000_000.0
+        self.totalSupply = 600_000_000.0
 
-        self.VaultStoragePath = /storage/GovernanceTokenVault
-        self.VaultPublicPath = /public/GovernanceTokenMetadata
-        self.ReceiverPublicPath = /public/GovernanceTokenReceiver
-        self.AdminStoragePath = /storage/GovernanceTokenAdmin
+        self.VaultStoragePath = /storage/GovTokenVault
+        self.VaultPublicPath = /public/GovTokenMetadata
+        self.ReceiverPublicPath = /public/GovTokenReceiver
+        self.AdminStoragePath = /storage/GovTokenAdmin
 
         // Create the Vault with the total supply of tokens and save it in storage.
         let vault <- create Vault(balance: self.totalSupply)
@@ -251,14 +262,14 @@ pub contract GovernanceToken: FungibleToken {
 
         // Create a public capability to the stored Vault that exposes
         // the `deposit` method through the `Receiver` interface.
-        self.account.link<&GovernanceToken.Vault{FungibleToken.Receiver}>(
+        self.account.link<&GovToken.Vault{FungibleToken.Receiver}>(
             self.ReceiverPublicPath,
             target: self.VaultStoragePath
         )
 
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field and the `resolveView` method through the `Balance` interface
-        self.account.link<&GovernanceToken.Vault{FungibleToken.Balance}>(
+        self.account.link<&GovToken.Vault{FungibleToken.Balance}>(
             self.VaultPublicPath,
             target: self.VaultStoragePath
         )

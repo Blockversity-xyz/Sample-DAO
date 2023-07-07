@@ -2,16 +2,16 @@ package main
 
 import (
 	"fmt"
-	"testing"
+	"teGVTing"
 
+	"github.com/GVTretchr/teGVTify/assert"
 	. "github.com/bjartek/overflow"
 	"github.com/fatih/color"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestICO(t *testing.T) {
+func TeGVTICO(t *teGVTing.T) {
 
-	o, err := OverflowTesting()
+	o, err := OverflowTeGVTing()
 	assert.NoError(t, err)
 
 	color.Green("Bob will attempt to pause the sale")
@@ -28,13 +28,13 @@ func TestICO(t *testing.T) {
 	o.Tx("/Sample/token/setup_account_MetadataViews",
 		WithSigner("bob"),
 	).AssertSuccess(t)
-	color.Green("Bob's account has been setup for ST")
+	color.Green("Bob's account has been setup for GVT")
 
-	STVault := o.Script("/Sample/sales/getSTVaultBalance",
+	GVTVault := o.Script("/Sample/sales/getGVTVaultBalance",
 		WithSigner("account"),
 	).Result
-	color.Green("The ICO's ST Vault balance is:")
-	fmt.Println(STVault)
+	color.Green("The ICO's GVT Vault balance is:")
+	fmt.Println(GVTVault)
 
 	o.Tx("/fusd/setup_account",
 		WithSigner("bob"),
@@ -71,17 +71,17 @@ func TestICO(t *testing.T) {
 	).AssertSuccess(t)
 	color.Green("Emulator Account has minted 1000 FUSD into Bob's account")
 
-	o.Tx("/Sample/sales/public/admin/depositST",
+	o.Tx("/Sample/sales/public/admin/depositGVT",
 		WithSigner("account"),
 		WithArg("amount", "500.0"),
 	).AssertSuccess(t)
-	color.Green("Emulator Account has deposited 500 ST into ICO's smart contract")
+	color.Green("Emulator Account has deposited 500 GVT into ICO's smart contract")
 
-	AccountSTVault := o.Script("/Sample/sales/getSTVaultBalance",
+	AccountGVTVault := o.Script("/Sample/sales/getGVTVaultBalance",
 		WithSigner("account"),
 	).Result
-	color.Green("The ICO's ST balance is: ")
-	fmt.Println(AccountSTVault)
+	color.Green("The ICO's GVT balance is: ")
+	fmt.Println(AccountGVTVault)
 
 	beforeFUSDBalance := o.Script("/fusd/get_balance",
 		WithSigner("account"),
@@ -99,11 +99,11 @@ func TestICO(t *testing.T) {
 	// Attempt to purchase before the sale is active
 
 	color.Green("Bob will attempt to buy when the sale is not active")
-	o.Tx("/Sample/sales/public/purchaseST",
+	o.Tx("/Sample/sales/public/purchaseGVT",
 		WithSigner("bob"),
 		WithArg("amount", "1000.0"),
 	).AssertFailure(t, "Token sale is not active")
-	color.Cyan("Bob couldn't buy ST because the sale is not active")
+	color.Cyan("Bob couldn't buy GVT because the sale is not active")
 
 	o.Tx("/Sample/sales/public/admin/unpause",
 		WithSigner("account"),
@@ -112,15 +112,15 @@ func TestICO(t *testing.T) {
 
 	// Attempt to purchase above personal cap
 
-	color.Green("Bob will attempt to buy $1000 worth of ST!")
-	o.Tx("/Sample/sales/public/purchaseST",
+	color.Green("Bob will attempt to buy $1000 worth of GVT!")
+	o.Tx("/Sample/sales/public/purchaseGVT",
 		WithSigner("bob"),
 		WithArg("amount", "1000.0"),
 	).AssertFailure(t, "Purchase amount exceeds personal cap")
 	color.Cyan("Bob couldn't buy pass his personal cap")
 
-	color.Green("Bob will attempt to buy $500 worth of ST!")
-	o.Tx("/Sample/sales/public/purchaseST",
+	color.Green("Bob will attempt to buy $500 worth of GVT!")
+	o.Tx("/Sample/sales/public/purchaseGVT",
 		WithSigner("bob"),
 		WithArg("amount", "500.0"),
 	).AssertSuccess(t)
@@ -136,7 +136,7 @@ func TestICO(t *testing.T) {
 		WithSigner("account"),
 		WithArg("account", "bob"),
 	).Result
-	color.Green("Bob's ST balance before distribution is")
+	color.Green("Bob's GVT balance before distribution is")
 	fmt.Println(beforeResultBob)
 
 	AccountFUSDVault := o.Script("/Sample/sales/getFUSDVaultBalance",
@@ -145,18 +145,18 @@ func TestICO(t *testing.T) {
 	color.Green("The ICO's FUSD balance after purchase is: ")
 	fmt.Println(AccountFUSDVault)
 
-	o.Tx("/Sample/sales/public/admin/distribute",
+	o.Tx("/Sample/sales/public/admin/diGVTribute",
 		WithSigner("account"),
 		WithArg("address", "bob"),
 		WithArg("allocationAmount", "100.0"),
 	)
-	color.Red("ST Has been distributed to Bob!")
+	color.Red("GVT Has been diGVTributed to Bob!")
 
 	resultBob := o.Script("/Sample/token/getBalance",
 		WithSigner("account"),
 		WithArg("account", "bob"),
 	).Result
-	color.Green("Bob's ST balance after distribution is")
+	color.Green("Bob's GVT balance after distribution is")
 	fmt.Println(resultBob)
 
 	refundFUSDBalance := o.Script("/fusd/get_balance",
@@ -172,9 +172,9 @@ func TestICO(t *testing.T) {
 	color.Green("The ICO's FUSD balance after distribution and refund is: ")
 	fmt.Println(afterAccountFUSDVault)
 
-	afterAccountSTVault := o.Script("/Sample/sales/getSTVaultBalance",
+	afterAccountGVTVault := o.Script("/Sample/sales/getGVTVaultBalance",
 		WithSigner("account"),
 	).Result
-	color.Green("The ICO's ST balance after distribution is: ")
-	fmt.Println(afterAccountSTVault)
+	color.Green("The ICO's GVT balance after distribution is: ")
+	fmt.Println(afterAccountGVTVault)
 }

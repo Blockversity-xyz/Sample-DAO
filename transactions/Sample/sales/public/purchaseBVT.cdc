@@ -1,6 +1,6 @@
 import NonFungibleToken from "../../../../contracts/utility/NonFungibleToken.cdc"
 import FUSD from "../../../../contracts/utility/FUSD.cdc"
-import SampleTokenPublicSale from "../../../../contracts/sales/SampleTokenPublicSale.cdc"
+import GovTokenPublicSale from "../../../../contracts/sales/GovTokenPublicSale.cdc"
 
 // Public transaction to buy the ST fungible token
 
@@ -28,6 +28,6 @@ transaction(amount: UFix64) {
 
     execute {
         // Enroll in ST public sale
-        SampleTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
+        GovTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
     }
 }

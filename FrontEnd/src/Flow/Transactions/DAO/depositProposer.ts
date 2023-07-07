@@ -2,7 +2,8 @@
 
 export const depositProposer = () => {
   return `
-import ExampleDAO from 0x800a10d0fff7acd4
+import ExampleDAO from 0x3c407ff30723099a
+
 
 transaction(proposerAddress: Address) {
 

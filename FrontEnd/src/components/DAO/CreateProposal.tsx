@@ -1,8 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import { createProposal } from "../Flow/GovernanceActions";
-import { setProxy, depositProposer } from "../Flow/GovernanceActions";
+import { createProposal } from "../../Flow/GovernanceActions";
 
 interface Props {
   onSubmit: (

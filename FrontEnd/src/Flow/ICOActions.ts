@@ -13,6 +13,7 @@ import { Buffer } from "buffer/";
 // // Scripts
 import { getBVTBalance as getBVTBalanceScript } from "./Scripts/ICO/getBVT_Balance";
 import { getFUSDVaultBalance as getFUSDVaultBalanceScript } from "./Scripts/ICO/getFUSDVaultBalance";
+import { getFUSDVaultStatus as getFUSDVaultStatusScript } from "./Scripts/ICO/getFUSDVaultStatus";
 import { getIsSaleActive as getIsSaleActiveScript } from "./Scripts/ICO/getIsSaleActive";
 import { getSaleInfo as getSaleInfoScript } from "./Scripts/ICO/getSaleInfo";
 import { getPurchaseInfo as getPurchaseInfoScript } from "./Scripts/ICO/getPurchaseInfo";
@@ -28,6 +29,12 @@ import { refund as refundTransaction } from "./Transactions/ICO/Admin/refund";
 import { distribute as distributeTransaction } from "./Transactions/ICO/Admin/distribute";
 import { withdrawBVT as withdrawBVTTransaction } from "./Transactions/ICO/Admin/withdrawBVT";
 import { setup_BVT as setup_BVTTransaction } from "./Transactions/ICO/setup_BVT";
+import { setTokenAdmin as setAdmin } from "./Transactions/ICO/setTokenAdmin";
+import { newMinter as newMinterGVT } from "./Transactions/ICO/Admin/newMinter";
+import { mintGVT as mint } from "./Transactions/ICO/Admin/mintGVT";
+import { setup_fusd as setup_f } from "./Transactions/ICO/setup_fusd";
+import { addAdmin as setAddAdmin } from "./Transactions/ICO/Admin/LaunchICO/addAdmin";
+import { launchToken as launchTokenScript } from "./Transactions/ICO/Admin/LaunchICO/launchToken";
 
 // // ICO Contract Code
 import { contractCode } from "./Transactions/ICO/contractCode";
@@ -37,12 +44,145 @@ export function replaceICOWithProperValues(
   contractAddress: string
 ) {
   return contractCode()
-    .replace('"../BlockVersityToken.cdc"', contractAddress)
-    .replaceAll("BlockVersityToken", tokenName);
+    .replace('"../GovernanceToken.cdc"', contractAddress)
+    .replaceAll("GovernanceToken", tokenName);
 }
 
 // // ****** Transactions Functions ****** //
 
+
+
+// get admin resource
+
+
+export const launchToken = async (
+  name: string,
+  symbol: string,
+  minCap: string,
+  maxCap: string, //changed to string
+  start: string, //changed to string
+  end: string,
+  price: string, //changed to string
+  goal: string, //changed to string
+  lockup: string //changed to string
+
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: launchTokenScript(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [
+          arg(name, t.String),
+          arg(symbol, t.String),
+          arg(minCap, t.UFix64),
+          arg(maxCap, t.UFix64),
+          arg(start, t.UFix64),
+          arg(end, t.UFix64),
+          arg(price, t.UFix64),
+          arg(goal, t.UFix64),
+          arg(lockup, t.UFix64),
+        ],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (e) {
+      console.log(e);
+      reject(false);
+    }
+  });
+};
+
+
+// launch token
+export const addAdmin = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: setAddAdmin(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (error) {
+      console.log(error);
+      reject(false);
+    }
+  });
+};
+
+// create new minter for the Governance Token contract
+export const newMinter = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: newMinterGVT(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (e) {
+      console.log(e);
+      reject(false);
+    }
+  });
+};
+
+// 
+export const mintGVT = async (
+  amount: string //changed to string
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: mint(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [
+          arg(amount, t.UFix64),
+        ],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (e) {
+      console.log(e);
+      reject(false);
+    }
+  });
+};
+// Become an Admin of the Governance Token contract
+
+export const setTokenAdmin = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: setAdmin(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [],
+        limit: 1000,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (error) {
+      console.log(error);
+      reject(false);
+    }
+  });
+};
 // Deploy an ICO contract from the Admin board
 export const deployICO = async (
   price: string,
@@ -81,6 +221,25 @@ export const setupBVT = async () => {
     try {
       const transactionId = await fcl.mutate({
         cadence: setup_BVTTransaction(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (e) {
+      console.log(e);
+      reject(false);
+    }
+  });
+};
+
+export const setup_fusd = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: setup_f(),
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
@@ -274,6 +433,21 @@ export const getFUSDBalance = async () => {
     console.log(e);
   }
 };
+
+// get FUSD Vault Status
+export const getFUSDVaultStatus = async () => {
+  try {
+    const response = await fcl.query({
+      cadence: getFUSDVaultStatusScript(),
+      args: (arg: any, t: any) => [],
+    });
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 
 // Check if sale is Active
 

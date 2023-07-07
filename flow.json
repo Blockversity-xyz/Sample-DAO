@@ -1,52 +1,44 @@
-
 {
-	"emulators": {
-		"default": {
-			"port": 3569,
-			"serviceAccount": "emulator-account"
-		}
-	},
 	"contracts": {
 		"Debug": "./contracts/utility/Debug.cdc",
-		"testFT": "./contracts/utility/testFT.cdc",
-		"Whitelist": "./contracts/AllowList.cdc",
-		"GovernanceTokenSale": "./contracts/sales/GovernanceTokenSale.cdc",
-		"GovernanceToken":  "./contracts/GovernanceToken.cdc",
-		
-
-		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
-		"exampleToken": "./contracts/exampleToken.cdc",
 		"ExampleDAO": "./contracts/DAO/FlowExampleDAO.cdc",
-		"TokenExampleDAO": "./contracts/DAO/TokenExampleDAO.cdc",
-		"FungibleToken": "./contracts/utility/FungibleToken.cdc",
 		"FUSD": {
 			"source": "./contracts/utility/FUSD.cdc",
 			"aliases": {
-				"testnet": "0xe223d8a629e49c68"
+				"testnet": "e223d8a629e49c68"
 			}
 		},
 		"FlowToken": {
 			"source": "./contracts/utility/FlowToken.cdc",
 			"aliases": {
-				"testnet": "0x7e60df042a9c0868",
-				"emulator": "0x0ae53cb6e3f42a79",
-				"mainnet": "0x1654653399040a61"
+				"emulator": "0ae53cb6e3f42a79",
+				"mainnet": "1654653399040a61",
+				"testnet": "7e60df042a9c0868"
+			}
+		},
+		"FungibleToken": "./contracts/utility/FungibleToken.cdc",
+		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
+		"GTokenPublicSale": "./contracts/sales/GTokenSale.cdc",
+		"GovToken": "./contracts/GovToken.cdc",
+		"GovTokenPublicSale": "./contracts/sales/GTokenSale.cdc",
+		"MetadataViews": {
+			"source": "./contracts/utility/MetadataViews.cdc",
+			"aliases": {
+				"mainnet": "1d7e57aa55817448",
+				"testnet": "631e88ae7f1d7c20"
 			}
 		},
 		"NonFungibleToken": {
 			"source": "./contracts/utility/NonFungibleToken.cdc",
 			"aliases": {
-				"testnet": "0x631e88ae7f1d7c20",
-				"mainnet": "0x1d7e57aa55817448"
+				"mainnet": "1d7e57aa55817448",
+				"testnet": "631e88ae7f1d7c20"
 			}
 		},
-		"MetadataViews": {
-			"source": "./contracts/utility/MetadataViews.cdc",
-			"aliases": {
-				"testnet": "0x631e88ae7f1d7c20",
-				"mainnet": "0x1d7e57aa55817448"
-			}
-		}
+		"TokenExampleDAO": "./contracts/DAO/TokenExampleDAO.cdc",
+		"Whitelist": "./contracts/AllowList.cdc",
+		"exampleToken": "./contracts/exampleToken.cdc",
+		"testFT": "./contracts/utility/testFT.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -54,28 +46,6 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"accounts": {
-		"testnet-account": {
-			"address": "0x3c407ff30723099a",
-			"key": {
-				"type": "hex",
-				"index": 0,
-				"signatureAlgorithm": "ECDSA_secp256k1",
-				"hashAlgorithm": "SHA3_256",
-				"privateKey": "f9bcd0de16c6c694b7fd72e6082c328e53a1c0526286f6bd09563c7ecebca6fd"
-			}
-		},
-		"emulator-account": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "dc0097a6b58533e56af78c955e7b0c0f386b5f44f22b75c390beab7fcb1af13f"
-		},
-		"emulator-first": {
-			"address": "01cf0e2f2f715450",
-			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
-		},
-		"emulator-second": {
-			"address": "179b6b1cb6755e31",
-			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
-		},
 		"emulator-3": {
 			"address": "f3fcd2c1a78f5eee",
 			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
@@ -88,37 +58,52 @@
 			"address": "045a1763c93006ca",
 			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
 		},
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "dc0097a6b58533e56af78c955e7b0c0f386b5f44f22b75c390beab7fcb1af13f"
+		},
 		"emulator-alice": {
-			"address": "0x01cf0e2f2f715450",
+			"address": "01cf0e2f2f715450",
 			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
 		},
 		"emulator-bob": {
-			"address": "0x179b6b1cb6755e31",
+			"address": "179b6b1cb6755e31",
 			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
+		},
+		"emulator-first": {
+			"address": "01cf0e2f2f715450",
+			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
+		},
+		"emulator-second": {
+			"address": "179b6b1cb6755e31",
+			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
+		},
+		"testnet-account": {
+			"address": "3c407ff30723099a",
+			"key": {
+				"type": "hex",
+				"signatureAlgorithm": "ECDSA_secp256k1",
+				"privateKey": "f9bcd0de16c6c694b7fd72e6082c328e53a1c0526286f6bd09563c7ecebca6fd"
+			}
 		}
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-bob": [],
 			"emulator-account": [
-				"NonFungibleToken",
-				"FungibleToken",
-				"MetadataViews",
-				"GovernanceToken",
-				"FUSD",
-				"FungibleTokenMetadataViews",
-				"GovernanceTokenSale"
+				"NonFungibleToken"
 			],
-			"emulator-alice": []
-		},
-		"testnet": {
-			"testnet-account": [
-				"TokenExampleDAO"
-			]
+			"emulator-alice": [],
+			"emulator-bob": []
 		},
 		"mainnet": {
 			"emulator-second": [
 				"Debug"
+			]
+		},
+		"testnet": {
+			"testnet-account": [
+				"GovToken",
+				"GTokenPublicSale"
 			]
 		}
 	}

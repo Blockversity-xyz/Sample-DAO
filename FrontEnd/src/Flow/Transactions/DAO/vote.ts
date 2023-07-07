@@ -2,13 +2,13 @@
 
 export const vote = () => {
   return `
-import ExampleDAO from 0x800a10d0fff7acd4
+import TokenExampleDAO from 0x3c407ff30723099a
 
 transaction(ProposalId: UInt64, OptionIndex: Int) {
 
   prepare(signer: AuthAccount) {
   let voter = signer
-  .borrow<&ExampleDAO.Voter>(from: ExampleDAO.VoterStoragePath)
+  .borrow<&TokenExampleDAO.Voter>(from: TokenExampleDAO.VoterStoragePath)
         ?? panic("Signer is not a Voter")
     voter.vote(ProposalId: ProposalId, optionIndex: OptionIndex)
   }

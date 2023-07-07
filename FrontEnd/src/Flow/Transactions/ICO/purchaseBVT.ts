@@ -2,7 +2,7 @@ export const purchaseBVT = () => {
   return `
 import NonFungibleToken from 0x631e88ae7f1d7c20
 import FUSD from 0xe223d8a629e49c68
-import BlockVersityTokenPublicSale from 0x49a232bb31e5dd58
+import GovTokenPublicSale from 0x3c407ff30723099a
 
 transaction(amount: UFix64) {
 
@@ -22,7 +22,7 @@ transaction(amount: UFix64) {
     }
 
     execute {
-        BlockVersityTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
+        GovTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
     }
 }
   `

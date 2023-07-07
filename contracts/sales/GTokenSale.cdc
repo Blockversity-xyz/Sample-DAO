@@ -1,20 +1,25 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import NonFungibleToken from "../utility/NonFungibleToken.cdc"
-import GovernanceToken from "../GovernanceToken.cdc"
-import FUSD from "../utility/FUSD.cdc"
 
-pub contract GovernanceTokenPublicSale {
+import FungibleToken from 0x9a0766d93b6608b7
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import GovToken from 0x3c407ff30723099a
+import FUSD from 0xe223d8a629e49c68
+
+pub contract GTokenPublicSale {
 
   /****** Contract Variables ******/
 
   // Define the ICO Token and Sale Details
-  pub let tokenName: String
-  pub let tokenSymbol: String
   pub let tokenSupply: UFix64
-  pub let tokenPrice: UFix64
-  pub let saleStart: UFix64
-  pub let saleEnd: UFix64
-  pub let minimumGoal: UFix64
+  pub var tokenName: String
+  pub var tokenSymbol: String
+  pub var totalIssued: UFix64 
+  pub var tokenPrice: UFix64
+  pub var saleStart: UFix64
+  pub var saleEnd: UFix64
+  pub var minimumGoal: UFix64
+  pub var isSaleActive: Bool
+  pub var isLaunched: Bool
+  pub var lockup : UFix64
   // GVT community sale purchase cap (in FUSD)
   access(contract) var maxCap: UFix64
   // Minimum amount to buy  (in FUSD)
@@ -38,8 +43,11 @@ pub contract GovernanceTokenPublicSale {
 
   /****** Sale Resources ******/
 
+  /// Paths for storing sale resources
+  pub let SaleAdminStoragePath: StoragePath
+
   // gVT holder vault
-  access(contract) let gvtVault: @GovernanceToken.Vault
+  access(contract) let gvtVault: @GovToken.Vault
 
   // FUSD holder vault
   access(contract) let fusdVault: @FUSD.Vault
@@ -77,20 +85,62 @@ pub contract GovernanceTokenPublicSale {
   }
 
   /****** Admin Resource ******/
-
-
+        pub fun claimAdmin(): @GTokenPublicSale.Admin {
+        return <- create Admin()
+    }
   pub resource Admin {
+      pub fun setLockup(lockup: UFix64) {
+          GTokenPublicSale.lockup = lockup
+      }
+      
+      pub fun setTokenName(name: String) {
+          GTokenPublicSale.tokenName = name
+      }
+      pub fun setTokenSymbol(symbol: String) {
+          GTokenPublicSale.tokenSymbol = symbol
+      }
+      pub fun setTokenPrice(price: UFix64) {
+          GTokenPublicSale.tokenPrice = price
+      }
+      pub fun setSaleStart(start: UFix64) {
+          GTokenPublicSale.saleStart = start
+      }
+      pub fun setSaleEnd(end: UFix64) {
+          GTokenPublicSale.saleEnd = end
+      }
+      pub fun setMinimumGoal(goal: UFix64) {
+          GTokenPublicSale.minimumGoal = goal
+      }
+        pub fun setMaxCap(cap: UFix64) {
+            GTokenPublicSale.maxCap = cap
+        }
+        pub fun setMinCap(cap: UFix64) {
+            GTokenPublicSale.minCap = cap
+        }
+        
+
+      pub fun isLauched() {
+          GTokenPublicSale.isLaunched = true
+      }
+
+            pub fun unpause() {
+            GTokenPublicSale.isSaleActive = true
+        }
+
+        pub fun pause() {
+            GTokenPublicSale.isSaleActive = false
+        }
 
       pub fun withdrawFUSD(amount: UFix64): @FungibleToken.Vault {
         pre {
           // Avoid withdrawing funds before the sale ends, in case it needs refunding
-          GovernanceTokenPublicSale.saleHasEnded() == false: "Token sale hasn't ended"
+          GTokenPublicSale.saleHasEnded() == false: "Token sale hasn't ended"
         }
-        return <- GovernanceTokenPublicSale.fusdVault.withdraw(amount: amount)
+        return <- GTokenPublicSale.fusdVault.withdraw(amount: amount)
       }
 
       pub fun depositGVT(from: @FungibleToken.Vault) {
-          GovernanceTokenPublicSale.gvtVault.deposit(from: <- from)
+          GTokenPublicSale.gvtVault.deposit(from: <- from)
       }
     }
 
@@ -120,24 +170,24 @@ pub contract GovernanceTokenPublicSale {
   pub fun distribute() {
     pre {
       // Avoid withdrawing funds before the sale ends, in case it needs refunding
-         GovernanceTokenPublicSale.saleHasEnded(): "Token sale hasn't ended"
-         GovernanceTokenPublicSale.gvtVault.balance >= self.minimumGoal: "The minimum goal wasn't reached"
+         GTokenPublicSale.saleHasEnded(): "Token sale hasn't ended"
+         GTokenPublicSale.gvtVault.balance >= self.minimumGoal: "The minimum goal wasn't reached"
         // Set a condition to not double distribute
       }
 
-    let Purchasers = GovernanceTokenPublicSale.getPurchasers()
+    let Purchasers = GTokenPublicSale.getPurchasers()
 
     // Distribute GVT purchase to all addresses in the list
     for address in Purchasers {
-      let purchaseInfo = GovernanceTokenPublicSale.getPurchase(address: address)!
-      let receiverRef = getAccount(address).getCapability(GovernanceToken.ReceiverPublicPath)
+      let purchaseInfo = GTokenPublicSale.getPurchase(address: address)!
+      let receiverRef = getAccount(address).getCapability(GovToken.ReceiverPublicPath)
           .borrow<&{FungibleToken.Receiver}>()
-          ?? panic("Could not borrow GovernanceToken receiver reference")
+          ?? panic("Could not borrow GovToken receiver reference")
 
-      let gvtVault <- GovernanceTokenPublicSale.gvtVault.withdraw(amount: purchaseInfo.amount)
+      let gvtVault <- GTokenPublicSale.gvtVault.withdraw(amount: purchaseInfo.amount)
       // Set the state of the purchase to DISTRIBUTED
       purchaseInfo.state = PurchaseState.distributed
-      GovernanceTokenPublicSale.purchases[address] = purchaseInfo
+      GTokenPublicSale.purchases[address] = purchaseInfo
       // Deposit the withdrawn tokens into the recipient's receiver
       receiverRef.deposit(from: <- gvtVault)
       emit Distributed(address: address, gvtAmount: purchaseInfo.amount)
@@ -147,25 +197,25 @@ pub contract GovernanceTokenPublicSale {
   pub fun refund() {
     pre {
       // Avoid withdrawing funds before the sale ends, in case it needs refunding
-         GovernanceTokenPublicSale.saleHasEnded(): "Token sale hasn't ended"
-         GovernanceTokenPublicSale.gvtVault.balance < self.minimumGoal: "The minimum goal was reached"
+         GTokenPublicSale.saleHasEnded(): "Token sale hasn't ended"
+         GTokenPublicSale.gvtVault.balance < self.minimumGoal: "The minimum goal was reached"
         // Set a condition to not double distribute
       }
 
-    let Purchasers = GovernanceTokenPublicSale.getPurchasers()
+    let Purchasers = GTokenPublicSale.getPurchasers()
 
     // Refund FUSD purchase to all addresses in the list
     for address in Purchasers {
-      let purchaseInfo = GovernanceTokenPublicSale.getPurchase(address: address)!
+      let purchaseInfo = GTokenPublicSale.getPurchase(address: address)!
       let receiverRef = getAccount(address).getCapability(/public/fusdReceiver)
           .borrow<&{FungibleToken.Receiver}>()
           ?? panic("Could not borrow FUSD receiver reference")
 
       let FusdAmount = purchaseInfo.amount * self.tokenPrice
-      let fusdVault <- GovernanceTokenPublicSale.fusdVault.withdraw(amount: FusdAmount)
+      let fusdVault <- GTokenPublicSale.fusdVault.withdraw(amount: FusdAmount)
       // Set the state of the purchase to REFUNDED
       purchaseInfo.state = PurchaseState.refunded
-      GovernanceTokenPublicSale.purchases[address] = purchaseInfo
+      GTokenPublicSale.purchases[address] = purchaseInfo
       // Deposit the withdrawn tokens into the recipient's receiver
       receiverRef.deposit(from: <- fusdVault)
       emit Refunded(address: address, amount: FusdAmount)
@@ -186,9 +236,14 @@ pub contract GovernanceTokenPublicSale {
       return self.purchases[address]
   }
 
+
   init() {
+    self.lockup = 0.0
+    self.isLaunched = false
+    self.totalIssued = 0.0
     self.tokenName = "Example Governance Token"
     self.tokenSymbol = "GVT"
+    self.isSaleActive = false
     // Total supply of GVT is 300M
     self.tokenSupply = 600_000_000.0
     // For each 1FUSD buyers get 4GVT
@@ -204,10 +259,13 @@ pub contract GovernanceTokenPublicSale {
     self.purchases = {}
 
 
-    self.gvtVault <- GovernanceToken.createEmptyVault()
+    self.gvtVault <- GovToken.createEmptyVault()
     self.fusdVault <- FUSD.createEmptyVault()
 
+     self.SaleAdminStoragePath = /storage/GTokenPublicSaleAdmin
 
+    let admin <- create Admin()
+    self.account.save(<- admin, to: self.SaleAdminStoragePath)
 
   }
 }

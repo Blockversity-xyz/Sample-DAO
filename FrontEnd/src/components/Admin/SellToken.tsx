@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { launchToken } from '../../Flow/ICOActions';
 
 type SellTokensFormData = {
+    tockenName: string;
+    tokenSymbol: string;
     maxSupply: number;
     totalSupply: number;
     minCap: number;
@@ -9,9 +12,13 @@ type SellTokensFormData = {
     endDate: Date;
     tokenPrice: number;
     lockup: number;
+    minimumGoal: number;
+
 };
 
 const initialFormData: SellTokensFormData = {
+    tockenName: 'Test Token',
+    tokenSymbol: 'TT',
     maxSupply: 1000000,
     totalSupply: 0,
     minCap: 100,
@@ -20,6 +27,7 @@ const initialFormData: SellTokensFormData = {
     endDate: new Date(),
     tokenPrice: 1.0000,
     lockup: 0,
+    minimumGoal: 100000000,
 };
 
 export default function SellTokensForm() {
@@ -36,6 +44,16 @@ export default function SellTokensForm() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         console.log(formData);
+        try {
+            const start = (formData.startDate.getTime() / 1000).toFixed(2);
+            const end = (formData.endDate.getTime() / 1000).toFixed(2);
+
+            launchToken(formData.tockenName, formData.tokenSymbol, formData.minCap.toFixed(2), formData.maxCap.toFixed(2), start, end, formData.tokenPrice.toFixed(2), formData.minimumGoal.toFixed(2), formData.lockup.toFixed(2));
+            alert('Token Launched! successfully!');
+        } catch (error) {
+            console.log(error);
+            alert('Error setting proxy.');
+        }
     };
 
     return (
@@ -43,23 +61,29 @@ export default function SellTokensForm() {
         <form className="w-full max-w-screen-xl mx-auto px-6 py-8" onSubmit={handleSubmit}>
             <div className="flex flex-wrap -mx-4">
                 <div className="w-full md:w-1/2 px-4 mb-6 md:mb-0">
-                    <h2 className="text-2xl mb-2 font-medium">Token Supply</h2>
+                    <h2 className="text-2xl mb-2 font-medium">Token Info</h2>
                     <div className="bg-gray-100 rounded-lg p-4">
                         <div className="text-lg mb-2">
-                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="maxSupply">
-                                Max Supply
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="tokenName">
+                                Token Name
                             </label>
-                            <div>
-                                {initialFormData.maxSupply}
-                            </div>
+                            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="tokenName"
+                                type="string"
+                                name="tokenName"
+                                value={formData.tockenName}
+                                onChange={(e) => setFormData({ ...formData, tockenName: e.target.value })} />
                         </div>
                         <div className="text-lg mb-2">
-                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="totalSupply">
-                                Total Supply
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="tokenSymbol">
+                                Token Symbol
                             </label>
-                            <div>
-                                {initialFormData.totalSupply}
-                            </div>
+                            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="tokenSymbol"
+                                type="string"
+                                name="tokenSymbol"
+                                value={formData.tokenSymbol}
+                                onChange={(e) => setFormData({ ...formData, tokenSymbol: e.target.value })} />
                         </div>
                     </div>
                 </div>
@@ -138,6 +162,8 @@ export default function SellTokensForm() {
                                 onChange={(e) => setFormData({ ...formData, lockup: parseInt(e.target.value) })}
                             />
                         </div>
+
+
                     </div>
                 </div>
             </div>

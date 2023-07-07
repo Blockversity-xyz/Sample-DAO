@@ -9,6 +9,10 @@ flow transactions send ./transactions/ExampleDAO/ExampleDAO.cdc --network=testne
 flow scripts execute ./scripts/ExampleDAO/ExampleDAO.cdc --network=testnet
 
 flow accounts update-contract ExampleDAO ./contracts/DAO/AdminExampleDAO.cdc --network=testnet --signer=testnet-account
+
+flow transactions send --network=testnet --code=./transactions/add_admin.cdc \
+  --args="[{\"type\": \"Address\", \"value\": \"0xCONTRACT_ADDRESS\"},
+           {\"type\": \"Address\", \"value\": \"0xRECEIVER_ADDRESS\"}]"
 ```
 
 # Sample-DAO

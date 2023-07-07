@@ -1,18 +1,18 @@
 import FungibleToken from "../../../../../contracts/utility/FungibleToken.cdc"
-import SampleToken from "../../../../../contracts/SampleToken.cdc"
-import SampleTokenPublicSale from "../../../../../contracts/sales/SampleTokenPublicSale.cdc"
+import GovToken from "../../../../../contracts/GovToken.cdc"
+import GovTokenPublicSale from "../../../../../contracts/sales/GovTokenPublicSale.cdc"
 
 // Withdraw ST by Admin and deposit it into an account.
 
 transaction(amount: UFix64, to: Address) {
 
     // The reference to the Admin Resource
-    let adminRef: &SampleTokenPublicSale.Admin
+    let adminRef: &GovTokenPublicSale.Admin
 
     prepare(signer: AuthAccount) {
 
         // Get admin reference
-        self.adminRef = signer.borrow<&SampleTokenPublicSale.Admin>(from: SampleTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = signer.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
 			?? panic("Could not borrow reference to the admin!")
     }
 
@@ -25,7 +25,7 @@ transaction(amount: UFix64, to: Address) {
         let recipient = getAccount(to)
 
         // Get a reference to the recipient's Receiver
-        let receiverRef = recipient.getCapability(SampleToken.ReceiverPublicPath)
+        let receiverRef = recipient.getCapability(GovToken.ReceiverPublicPath)
             .borrow<&{FungibleToken.Receiver}>()
 			?? panic("Could not borrow receiver reference to the recipient's Vault")
 
