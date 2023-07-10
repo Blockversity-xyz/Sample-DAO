@@ -8,7 +8,7 @@ flow transactions send ./transactions/ExampleDAO/ExampleDAO.cdc --network=testne
 
 flow scripts execute ./scripts/ExampleDAO/ExampleDAO.cdc --network=testnet
 
-flow accounts update-contract ExampleDAO ./contracts/DAO/AdminExampleDAO.cdc --network=testnet --signer=testnet-account
+flow accounts update-contract ./contracts/sales/GTokenSale.cdc --network=testnet --signer=testnet-account
 
 flow transactions send --network=testnet --code=./transactions/add_admin.cdc \
   --args="[{\"type\": \"Address\", \"value\": \"0xCONTRACT_ADDRESS\"},
@@ -18,11 +18,6 @@ flow transactions send --network=testnet --code=./transactions/add_admin.cdc \
 # Sample-DAO
 
 
-[Sample](https://www.blockversity.xyz/) is THE platform agnostic community for online educators supported by a DAO. Sample's objective is to serve online educators with NFTs as a service,  giving power back to Course Creators and verifiable on-chain credentials to students.
-
-Sample gives power back to thousands of global course creators selling on centralized marketplaces, offering them fairer compensation by providing tools to sell courses as NFTs on their websiste, social networks or even by email. For students, Sample provides them with verifiable on-chain credentials. These proof-of-skill NFTs would have the same credibility globally.
-
-[![Sample Website](https://i.postimg.cc/Pfw7z1g4/Screenshot-2022-12-14-at-11-40-21-AM.png)](https://www.blockversity.xyz/)
 
 ## Overview
 
@@ -71,6 +66,21 @@ Here is what you need to be able to run the project.
 - Flow CLI
 - Go
 
+## Cadence
+
+### Smart Contracts
+
+The smart contracts are written in Cadence and are located in the `contracts` folder. The contracts are deployed to the testnet using the [Flow CLI](https://docs.onflow.org/flow-cli).
+
+### Transactions
+
+The transactions are written in Cadence and are located in the `transactions` folder. The transactions are deployed to the testnet using the [Flow CLI](https://docs.onflow.org/flow-cli).
+
+### Scripts
+
+The scripts are written in Cadence and are located in the `scripts` folder. The scripts are executed on the testnet using the [Flow CLI](https://docs.onflow.org/flow-cli).
+
+
 ## Testing
 
 ### Overflow
@@ -98,6 +108,4 @@ flow accounts create \
   --host access.devnet.nodes.onflow.org:9000 \
   --signer YOUR_ACCOUNT_ADDRESS
 ```
-
-
 

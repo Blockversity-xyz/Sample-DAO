@@ -1,5 +1,3 @@
-export const depositBVT = () => {
-  return `
 import GTokenPublicSale from 0x3c407ff30723099a
 import GovToken from 0x3c407ff30723099a
 import FungibleToken from 0x9a0766d93b6608b7
@@ -26,6 +24,4 @@ transaction(amount: UFix64) {
         // Deposit BVT
         self.adminRef.depositGVT(from: <-self.sentVault)
     }
-}
-  `
 }

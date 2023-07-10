@@ -19,6 +19,7 @@ import { getSaleInfo as getSaleInfoScript } from "./Scripts/ICO/getSaleInfo";
 import { getPurchaseInfo as getPurchaseInfoScript } from "./Scripts/ICO/getPurchaseInfo";
 import { getPurchasers as getPurchasersScript } from "./Scripts/ICO/getPurchasers";
 
+
 // // Transactions
 import { deployerTransactionCode } from "./Transactions/ICO/deployICO";
 import { purchaseBVT as purchaseBVTTransaction } from "./Transactions/ICO/purchaseBVT";
@@ -28,13 +29,15 @@ import { unPause as unPauseTransaction } from "./Transactions/ICO/Admin/unpause"
 import { refund as refundTransaction } from "./Transactions/ICO/Admin/refund";
 import { distribute as distributeTransaction } from "./Transactions/ICO/Admin/distribute";
 import { withdrawBVT as withdrawBVTTransaction } from "./Transactions/ICO/Admin/withdrawBVT";
-import { setup_BVT as setup_BVTTransaction } from "./Transactions/ICO/setup_BVT";
+import { setup_GVT as setup_BVTTransaction } from "./Transactions/ICO/setup_GVT";
 import { setTokenAdmin as setAdmin } from "./Transactions/ICO/setTokenAdmin";
 import { newMinter as newMinterGVT } from "./Transactions/ICO/Admin/newMinter";
 import { mintGVT as mint } from "./Transactions/ICO/Admin/mintGVT";
 import { setup_fusd as setup_f } from "./Transactions/ICO/setup_fusd";
 import { addAdmin as setAddAdmin } from "./Transactions/ICO/Admin/LaunchICO/addAdmin";
 import { launchToken as launchTokenScript } from "./Transactions/ICO/Admin/LaunchICO/launchToken";
+import { getFUSD as getFUSDScript } from "./Transactions/ICO/test/getFUSD";
+
 
 // // ICO Contract Code
 import { contractCode } from "./Transactions/ICO/contractCode";
@@ -49,6 +52,26 @@ export function replaceICOWithProperValues(
 }
 
 // // ****** Transactions Functions ****** //
+
+// get FUSD tokens for testing
+export const getFUSD = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: getFUSDScript(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      resolve(transaction);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 
 
@@ -117,6 +140,8 @@ export const addAdmin = async () => {
     }
   });
 };
+
+
 
 // create new minter for the Governance Token contract
 export const newMinter = async () => {
@@ -216,7 +241,7 @@ export const deployICO = async (
 };
 
 // Setup an account to receive BVT
-export const setupBVT = async () => {
+export const setup_GVT = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
@@ -418,6 +443,11 @@ export const getBVTBalance = async () => {
     console.log(e);
   }
 };
+
+
+// Get FUSD Balance on user account.
+
+
 
 // Get FUSD Balance on the ICO smart contract.
 

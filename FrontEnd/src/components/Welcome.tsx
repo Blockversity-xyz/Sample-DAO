@@ -1,13 +1,13 @@
 /** @format */
 
 import { signWhitelist, getAllAddresses } from "../Flow/allowListActions";
-import { purchaseBVT, setupBVT } from "../Flow/ICOActions";
+import { purchaseBVT } from "../Flow/ICOActions";
 import { useEffect, useState } from "react";
 import { currentUser } from "../Flow/allowListActions";
 import { Link } from 'react-router-dom';
 import { setProxy, depositProposer } from "../Flow/GovernanceActions";
 import { setTokenAdmin } from "../Flow/ICOActions";
-import { setup_fusd } from "../Flow/ICOActions";
+import { setup_fusd, setup_GVT } from "../Flow/ICOActions";
 import { addAdmin } from "../Flow/ICOActions";
 interface InputProps {
   placeholder: string;
@@ -29,7 +29,7 @@ const Welcome: React.FC = () => {
   });
   const [user, setUser] = useState<{ addr: string } | null>(null);
   const [addresses, setAddresses] = useState<string[]>([]);
-
+  const [FUSD, setFUSD] = useState<string>("");
   useEffect(() => {
     currentUser().subscribe(setUser);
   }, []);
@@ -68,7 +68,7 @@ const Welcome: React.FC = () => {
 
   const handleSetTokenAdminClick = async () => {
     try {
-      await setTokenAdmin();
+      await setup_GVT();
       alert('You are now a token Admin!');
     } catch (error) {
       console.log(error);
@@ -92,74 +92,28 @@ const Welcome: React.FC = () => {
       <div className='flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4'>
         <div className='flex flex-1 justify-start items-start flex-col mf:mr-10'>
           <div>
-            {user && user?.addr ? (
-              <div>
-                <p className='text-left my-2 text-white font-light text-base'>You have successfully signed the whitelist</p>
-
-                {user?.addr && !addresses.includes(user?.addr) && (
-                  <button
-                    type='button'
-                    onClick={() => signWhitelist()}
-                    className='flex flex-row justify-center items-center my-5 bg-[#0f9c45] p-3 rounded-full cursor-pointer hover:bg-[#76ef4e]'>
-                    <p className='text-white text-base font-semibold'>Sign Whitelist</p>
-                  </button>)}
-
-
-                {user?.addr && addresses.includes(user?.addr) && (
-                  <div className='p-5 sm:w-96 w-full flex flex-col justify-start items-center text-white'>
-                    <p className='text-left my-2 text-white font-light md:w-9/12 w-11/12 text-base'>You can now review or create proposals or vote on current ones</p>
-                    <button onClick={() => showAddresses()}>Get All Addresses</button>
-                    {toggle && (
-                      <div>
-                        {addresses.map((address) => (
-                          <div key={address}>
-                            <p>{address}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className='text-left text-white font-light '>Welcome to Your DAO <br />
-                To get started, you need to connect your wallet!</p> // on put 2 lines
-            )}
+            <h1 className='text-4xl font-bold text-white'>Welcome to the</h1>
+            <h1 className='text-4xl font-bold text-white'>DAO</h1>
           </div>
           <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
+            {/* Buttons here if needed */}
+            <p> Here is you have the opportunity to test the functionalities we have built that go from creating proposals, voting on them, or managing an ICO.</p>
+          </div>
+          <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
+            {/* Buttons here if needed */}
             <button
-              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
-              onClick={handleSetProxyClick}
-            >
-              Setup Account
-            </button>
-
-            <br />
-            <button
-              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
+              className='bg-white text-black rounded-md py-2 px-4'
               onClick={handleSetFUSDClick}
             >
-              Setup FUSD
+              Set FUSD
             </button>
-
-          </div>
-          <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
             <button
-              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
+              className='bg-white text-black rounded-md py-2 px-4'
               onClick={handleSetTokenAdminClick}
             >
-              Become Token Admin
+              Set GVT
             </button>
-
-          </div>
-          <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
-            <button
-              className='text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#125030] rounded-full cursor-pointer'
-              onClick={handleaddAdminClick}
-            >
-              Become sale Admin
-            </button>
-
+            <p> To start, you need to connect your wallet. </p>
           </div>
         </div>
       </div>

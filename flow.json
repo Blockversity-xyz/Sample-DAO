@@ -103,7 +103,8 @@
 		"testnet": {
 			"testnet-account": [
 				"GovToken",
-				"GTokenPublicSale"
+				"GTokenPublicSale",
+				"FUSD"
 			]
 		}
 	}

@@ -196,7 +196,7 @@ pub contract FUSD: FungibleToken {
         self.MinterProxyPublicPath = /public/fusdMinterProxy
         self.MinterProxyStoragePath = /storage/fusdMinterProxy
 
-        self.totalSupply = 0.0
+        self.totalSupply = 200_000_000.0
 
         let admin <- create Administrator()
                 // Create the Vault with the total supply of tokens and save it in storage.
@@ -217,6 +217,6 @@ pub contract FUSD: FungibleToken {
         self.account.save(<-admin, to: self.AdminStoragePath)
 
         // Emit an event that shows that the contract was initialized
-        emit TokensInitialized(initialSupply: 0.0)
+        emit TokensInitialized(initialSupply: 10000000.0)
     }
 }

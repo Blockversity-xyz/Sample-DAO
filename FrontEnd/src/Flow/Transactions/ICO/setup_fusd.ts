@@ -1,8 +1,8 @@
 export const setup_fusd = () => {
   return `
-import FUSD from 0x3c407ff30723099a
-import FungibleToken from 0x3c407ff30723099a
-import ExampleDAO from 0x3c407ff30723099a
+import FUSD from 0xe223d8a629e49c68
+import FungibleToken from 0x9a0766d93b6608b7
+import TokenExampleDAO from 0x3c407ff30723099a
 
 transaction {
 
@@ -10,6 +10,7 @@ transaction {
 
         // It's OK if the account already has a Vault, but we don't want to replace it
         if(signer.borrow<&FUSD.Vault>(from: /storage/FUSDVault) != nil) {
+            log("FUSD Vault already exists in account")
             return
         }
 

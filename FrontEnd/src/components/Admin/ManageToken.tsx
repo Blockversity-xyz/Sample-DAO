@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 interface TokenManagement {
     refund: boolean;
     burn: number;
@@ -19,21 +20,9 @@ const initialFormValues: TokenManagement = {
     distribute: false,
 };
 
-const initialContractList: Contract[] = [
-    {
-        name: 'Contract 1',
-        address: '0x1234567890123456789012345678901234567890',
-    },
-    {
-        name: 'Contract 2',
-        address: '0x0987654321098765432109876543210987654321',
-    },
-];
 
 export default function ManageTokensForm() {
     const [formValues, setFormValues] = useState<TokenManagement>(initialFormValues);
-    const [selectedContract, setSelectedContract] = useState<Contract>(initialContractList[0]);
-    const [contractList, setContractList] = useState<Contract[]>(initialContractList);
 
     const handleFreezeClick = () => {
         if (window.confirm("Are you sure you want to freeze this token? This action is irreversible.")) {
@@ -65,33 +54,10 @@ export default function ManageTokensForm() {
         console.log('Form submitted:', formValues);
     };
 
-    const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedAddress = event.target.value;
-        const selectedContract = contractList.find((contract) => contract.address === selectedAddress);
-        if (selectedContract) {
-            setSelectedContract(selectedContract);
-        }
-    };
 
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center">
             <div className="grid grid-cols-2 gap-4 w-full max-w-screen-md">
-                <div className="flex flex-col col-span-2">
-                    <label htmlFor="contract">Contract</label>
-                    <select
-                        id="contract"
-                        name="contract"
-                        value={selectedContract.address}
-                        onChange={handleContractSelect}
-                        className="rounded-lg border-gray-400 border p-2 w-full mt-2"
-                    >
-                        {contractList.map((contract) => (
-                            <option key={contract.address} value={contract.address}>
-                                {contract.address}
-                            </option>
-                        ))}
-                    </select>
-                </div>
                 <div className="flex flex-col">
 
                     <label htmlFor="refund">Refund</label>

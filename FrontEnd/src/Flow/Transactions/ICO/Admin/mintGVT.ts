@@ -1,6 +1,6 @@
 export const mintGVT = () => {
     return `
-import FungibleToken from 0x01
+import FungibleToken from 0x3c407ff30723099a
 import GovToken from 0x3c407ff30723099a
 
 transaction (amount : UFix64) {

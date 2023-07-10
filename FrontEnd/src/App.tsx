@@ -2,7 +2,7 @@
 
 import React from "react";
 import Welcome from "./components/Welcome";
-import Admin from "./components/Admin";
+import Admin from "./components/Admin/Admin";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProposalList from "./components/DAO/ProposalList";
 import CreateProposal from "./components/DAO/CreateProposal";

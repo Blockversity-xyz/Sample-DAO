@@ -53,14 +53,6 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
                     <div className="flex flex-col sm:flex-row justify-between items-center mt-8">
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                {tokenInfo.address}
-                            </h1>
-                            <p className="text-sm text-gray-500">Address</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-col sm:flex-row justify-between items-center mt-8">
-                        <div className="flex flex-col">
-                            <h1 className="text-2xl font-bold text-gray-800">
                                 {tokenomics.initialSupply}
                             </h1>
                             <p className="text-sm text-gray-500">Initial Supply</p>

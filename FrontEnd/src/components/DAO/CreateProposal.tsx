@@ -17,7 +17,7 @@ interface Props {
 export default function CreateProposal({ onSubmit }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
+  const [options, setOptions] = useState<string[]>(["", ""]);
   const [startAt, setStartAt] = useState(new Date());
   const [endAt, setEndAt] = useState(new Date());
   const [minHoldedGVTAmount, setMinHoldedGVTAmount] = useState(0.0);

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import CreateToken from "./Admin/CreateToken";
-import SellToken from "./Admin/SellToken";
-import ManageToken from "./Admin/ManageToken";
-import ICO from "./Admin/ICO";
-import Tokennomics from "./Admin/Tokenomics";
-import PurchaserList from "./Admin/PurchaserList";
+import CreateToken from "./CreateToken";
+import SellToken from "./SellToken";
+import ManageToken from "./ManageToken";
+import ICO from "./ICO";
+import Tokennomics from "./Tokenomics";
+import PurchaserList from "./PurchaserList";
 
 type Tokenomics = {
   name: string;
@@ -76,10 +76,10 @@ const AdminDashboard: React.FC = () => {
               </button>
 
               <button
-                className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "tokennomics" ? "btn-primary text-green-500" : ""}`}
-                onClick={() => handleTabClick("tokennomics")}
+                className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "tokenomics" ? "btn-primary text-green-500" : ""}`}
+                onClick={() => handleTabClick("tokenomics")}
               >
-                Tokennomics
+                Tokenomics
               </button>
 
               <button
@@ -103,7 +103,7 @@ const AdminDashboard: React.FC = () => {
             {activeTab === "sellToken" && <SellToken />}
             {activeTab === "manageToken" && <ManageToken />}
             {activeTab === "ico" && <ICO />}
-            {activeTab === "tokennomics" && <Tokennomics tokenomics={myTokenomics} />}
+            {activeTab === "tokenomics" && <Tokennomics tokenomics={myTokenomics} />}
             {activeTab === "purchaserList" && <PurchaserList />}
           </div>
         </div>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getSaleInfo, getPurchasers } from "../../Flow/ICOActions";
 
+
 const ICO: React.FC = () => {
+
   const [tokenInfo, setTokenInfo] = useState<any>({});
   const [purchasers, setPurchasers] = useState<string[]>([]);
 
@@ -40,7 +42,7 @@ const ICO: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gray-100 rounded-lg shadow p-4">
-            <h2 className="text-lg font-medium mb-2">TOTAL</h2>
+            <h2 className="text-lg font-medium mb-2">Max Cap</h2>
             <p className="text-3xl font-semibold">{/* Add total amount here */}</p>
           </div>
 
