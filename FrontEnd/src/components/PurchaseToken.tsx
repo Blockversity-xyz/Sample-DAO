@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { getFUSD, getSaleInfo, purchaseBVT } from "../Flow/ICOActions";
+import { useNavigate } from "react-router-dom";
 import { set } from "date-fns";
 
 const PurchaseToken: React.FC = () => {
-    const [fromToken, setFromToken] = useState(0.0);
+    const [fromToken, setFromToken] = useState("");
     const [toToken, setToToken] = useState("");
     const [amount, setAmount] = useState("");
+    let navigate = useNavigate();
 
     const [tokenInfo, setTokenInfo] = useState<any>({});
 
@@ -15,27 +17,29 @@ const PurchaseToken: React.FC = () => {
         });
     }, []);
 
-    const handleSwap = () => {
-        // Handle token swap logic here
+    const handleSwap = async () => {
         console.log("Swapping tokens...");
 
-        // Validate if fromToken is a valid number
-        if (isNaN(fromToken)) {
-            console.log("Please enter a valid number for fromToken.");
-            return;
-        }
-
         try {
-            purchaseBVT(parseFloat(fromToken).toFixed(2)).then((tx) => {
-                console.log(tx);
-            });
+            const tx = await purchaseBVT(parseFloat(fromToken).toFixed(2));
+            console.log(tx);
+            // Reset the fields to zero
+
+            // Display success message
+            alert(
+                "You now own GVTs, the governance token. You are ready to set up a proposal."
+            );
+            setFromToken("0");
+            // Navigate to the proposals page
+            navigate("/create_proposal");
+
         } catch (error) {
             console.log(error);
+            alert("Error purchasing tokens.");
         }
 
         console.log("Tokens swapped!");
     };
-
 
     return (
         <div className="flex justify-center">
@@ -47,7 +51,7 @@ const PurchaseToken: React.FC = () => {
                             Value in FUSD
                         </label>
                         <input
-                            type="number"
+                            type="string"
                             id="fromToken"
                             value={fromToken}
                             onChange={(e) => setFromToken(e.target.value)}
@@ -58,9 +62,9 @@ const PurchaseToken: React.FC = () => {
 
                     <div className="flex items-center justify-between mb-4">
                         <label htmlFor="toToken" className="text-gray-600 mr-2">
-                            you will get GVT
+                            You will get GVT
                         </label>
-                        {(parseInt(fromToken) * tokenInfo.tokenPrice)}
+                        {parseFloat(fromToken) / tokenInfo.tokenPrice}
                     </div>
 
                     <button
@@ -70,6 +74,10 @@ const PurchaseToken: React.FC = () => {
                         Buy
                     </button>
                 </div>
+                <p className="text-center mt-10">
+                    Add the governance token to your wallet so that you can vote or create proposals.
+                    You do this by swapping FUSD to GVT.
+                </p>
             </div>
         </div>
     );

@@ -1,17 +1,17 @@
 export const withdrawBVT = () => {
   return `
-import GTokenPublicSale from 0x3c407ff30723099a
-import GovToken from 0x3c407ff30723099a
-import FungibleToken from 0x9a0766d93b6608b7
+import GovTokenPublicSale from 0xc61f695fe4f80614
+import GToken from 0xc61f695fe4f80614
+import FungibleToken from 0xc61f695fe4f80614
 
 
 transaction(amount: UFix64, to: Address) {
 
-    let adminRef: &GTokenPublicSale.Admin
+    let adminRef: &GovTokenPublicSale.Admin
 
     prepare(signer: AuthAccount) {
 
-        self.adminRef = signer.borrow<&GTokenPublicSale.Admin>(from: GTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = signer.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
 			?? panic("Could not borrow reference to the admin!")
     }
 
@@ -21,7 +21,7 @@ transaction(amount: UFix64, to: Address) {
 
         let recipient = getAccount(to)
 
-        let receiverRef = recipient.getCapability(GovToken.ReceiverPublicPath)
+        let receiverRef = recipient.getCapability(GToken.ReceiverPublicPath)
             .borrow<&{FungibleToken.Receiver}>()
 			?? panic("Could not borrow receiver reference to the recipient's Vault")
 

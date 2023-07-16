@@ -1,6 +1,5 @@
-/** @format */
 
-export const setProxy = () => {
+export const createVoter = () => {
   return `
 import GTokenExampleDAO from 0xc61f695fe4f80614
 
@@ -14,7 +13,7 @@ transaction {
     signer.link<&GTokenExampleDAO.Voter>(
       /public/GTokenExampleDAOVoter,
       target: /storage/GTokenExampleDAOVoter
-      
+
     )
   }
 }

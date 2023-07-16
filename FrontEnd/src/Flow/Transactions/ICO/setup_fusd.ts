@@ -1,8 +1,8 @@
 export const setup_fusd = () => {
   return `
-import FUSD from 0xe223d8a629e49c68
-import FungibleToken from 0x9a0766d93b6608b7
-import TokenExampleDAO from 0x3c407ff30723099a
+import FUSD from 0xc61f695fe4f80614
+import FungibleToken from 0xc61f695fe4f80614
+import TokenExampleDAO from 0xc61f695fe4f80614
 
 transaction {
 
@@ -20,14 +20,14 @@ transaction {
         // Create a public capability to the Vault that only exposes
         // the deposit function through the Receiver interface
         signer.link<&FUSD.Vault{FungibleToken.Receiver}>(
-            /public/FUSDReceiver,
+            /public/fusdReceiver,
             target: /storage/FUSDVault
         )
 
         // Create a public capability to the Vault that only exposes
         // the balance field through the Balance interface
         signer.link<&FUSD.Vault{FungibleToken.Balance}>(
-            /public/FUSDBalance,
+            /public/fusdBalance,
             target: /storage/FUSDVault
         )
     }

@@ -113,6 +113,7 @@ export const createProposal = async (
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      resolve('Operation completed successfully');
     } catch (e) {
       console.log(e);
       reject(false);

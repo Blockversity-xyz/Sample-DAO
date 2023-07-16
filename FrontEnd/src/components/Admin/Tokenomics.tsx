@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { getSaleInfo, getPurchasers } from "../../Flow/ICOActions";
-
-type Tokenomics = {
-    name: string;
-    symbol: string;
-    address: string;
-    price: number;
-    maxSupply: number;
-    initialSupply: number;
-};
+import { getSaleInfo, getPurchasers, getMaxCap } from "../../Flow/ICOActions";
 
 
-
-const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
+const TokenomicsForm = () => {
     const [tokenInfo, setTokenInfo] = useState<any>({});
     const [purchasers, setPurchasers] = useState<string[]>([]);
+    const [maxCap, setMaxCap] = useState<number>(0);
 
     useEffect(() => {
         getSaleInfo().then((info) => {
@@ -23,6 +14,10 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
         getPurchasers().then((addresses) => {
             setPurchasers(addresses);
         });
+        getMaxCap().then((maxCap) => {
+            setMaxCap(maxCap);
+        }
+        );
     }, []);
     return (
         <div className="flex justify-center">
@@ -53,9 +48,10 @@ const TokenomicsForm = ({ tokenomics }: { tokenomics: Tokenomics }) => {
                     <div className="flex flex-col sm:flex-row justify-between items-center mt-8">
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                {tokenomics.initialSupply}
+                                {/* equal to max cap */}
+                                Max Cap
                             </h1>
-                            <p className="text-sm text-gray-500">Initial Supply</p>
+                            <p className="text-sm text-gray-500">{maxCap}</p>
                         </div>
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-bold text-gray-800">

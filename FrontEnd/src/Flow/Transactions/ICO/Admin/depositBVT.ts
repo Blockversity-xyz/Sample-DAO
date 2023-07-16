@@ -1,31 +1,42 @@
 export const depositBVT = () => {
   return `
-import GTokenPublicSale from 0x3c407ff30723099a
-import GovToken from 0x3c407ff30723099a
-import FungibleToken from 0x9a0766d93b6608b7
+import GovTokenPublicSale from 0xc61f695fe4f80614
+import GToken from 0xc61f695fe4f80614
+import FungibleToken from 0xc61f695fe4f80614
 
 transaction(amount: UFix64) {
 
-    let adminRef: &GTokenPublicSale.Admin
+    let adminRef: &GovTokenPublicSale.Admin
 
     let sentVault:  @FungibleToken.Vault
 
     prepare(account: AuthAccount) {
 
-        self.adminRef = account.borrow<&GTokenPublicSale.Admin>(from: GTokenPublicSale.SaleAdminStoragePath)
-			?? panic("Could not borrow reference to the admin!")
+        let provider = getAccount(0xc61f695fe4f80614)
 
-        let vaultRef = account.borrow<&GovToken.Vault>(from: GovToken.VaultStoragePath)
+        let providerVaultRef = provider
+            .getCapability(GToken.VaultPublicPath)
+            .borrow<&GToken.Vault{FungibleToken.Provider}>()
+            ?? panic("Could not borrow reference to the provider's Vault")
+
+        // Withdraw tokens from provider's vault
+
+        self.adminRef = account.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
+			?? panic("Could not borrow reference to the Sale admin!")
+
+        let vaultRef = account.borrow<&GToken.Vault>(from: GToken.VaultStoragePath)
 			?? panic("Could not borrow reference to the owner's Vault!")
 
-        self.sentVault <- vaultRef.withdraw(amount: amount)
+        self.sentVault <- providerVaultRef.withdraw(amount: amount)
+        
     }
 
-    execute {
+        execute {
 
-        // Deposit BVT
+        // Deposit GVT
         self.adminRef.depositGVT(from: <-self.sentVault)
     }
 }
+
   `
 }

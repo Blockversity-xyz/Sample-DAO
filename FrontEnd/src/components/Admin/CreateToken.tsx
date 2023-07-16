@@ -1,51 +1,59 @@
-import { useState, useEffect } from "react";
-import { depositBVT } from "../../Flow/ICOActions";
+import React, { useState, useEffect } from "react";
+import { depositBVT, getGovToken } from "../../Flow/ICOActions";
 
 interface TokenFormData {
     maxSupply: number;
     totalSupply: number;
-    mintGVT: number;
+    transferGVT: number;
 }
 
 const CreateTokenForm = () => {
     const [formData, setFormData] = useState<TokenFormData>({
         maxSupply: 0,
         totalSupply: 0,
-        mintGVT: 0,
+        transferGVT: 0,
     });
 
+    const [inCirculation, setInCirculation] = useState<number>(0);
+
+
     useEffect(() => {
-        // Simulating API call to fetch the maxSupply and totalSupply values
+        // Simulating API call to fetch the maxSupply value
         fetchTokenData().then((data) => {
             setFormData((prevFormData) => ({
                 ...prevFormData,
                 maxSupply: data.maxSupply,
-                totalSupply: data.totalSupply,
             }));
         });
+
+        // Fetch totalSupply value
+        getGovToken().then((data) => {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                totalSupply: data,
+            }));
+        });
+
+        setInCirculation((formData.maxSupply - formData.totalSupply));
     }, []);
 
     const fetchTokenData = async () => {
-        // Simulating API call to retrieve token data from the backend
-        return new Promise<{ maxSupply: number; totalSupply: number }>(
-            (resolve) => {
-                setTimeout(() => {
-                    // Mocked data, replace with actual API response handling
-                    resolve({ maxSupply: 600000000, totalSupply: 0 });
-                }, 1000);
-            }
-        );
+        // In the backend maxSupply is 600,000,000
+        return new Promise<{ maxSupply: number }>((resolve) => {
+            setTimeout(() => {
+                resolve({ maxSupply: 600000000 });
+            }, 10);
+        });
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
             console.log(formData);
-            depositBVT(formData.mintGVT.toFixed(2));
-            alert("Tokens Sent successfully!");
+            depositBVT(formData.transferGVT.toFixed(2));
         } catch (error) {
             console.log(error);
-            alert("Error setting proxy.");
+            alert("Error Sending Tokens.");
         }
     };
 
@@ -54,7 +62,11 @@ const CreateTokenForm = () => {
     ) => {
         const { name, value } = event.target;
         const parsedValue = parseFloat(value);
-        setFormData({ ...formData, [name]: parsedValue });
+
+        // Validate the input value to disallow negative values
+        const inputValue = parsedValue >= 0 ? parsedValue : 0;
+
+        setFormData({ ...formData, [name]: inputValue });
     };
 
     return (
@@ -63,27 +75,22 @@ const CreateTokenForm = () => {
                 <label htmlFor="maxSupply" className="block font-medium mb-2">
                     Max Supply
                 </label>
-                <div className="border rounded-md px-3 py-2">
-                    {formData.maxSupply.toLocaleString()}
-                </div>
+                <div className="border rounded-md px-3 py-2">{formData.maxSupply}</div>
             </div>
             <div>
                 <label htmlFor="totalSupply" className="block font-medium mb-2">
-                    Total Supply
+                    In Circulation
                 </label>
-                <div className="border rounded-md px-3 py-2">
-                    {formData.totalSupply.toLocaleString()}
-                </div>
+                <div className="border rounded-md px-3 py-2">{formData.maxSupply - formData.totalSupply}</div>
             </div>
 
             <div>
-                <label htmlFor="mintGVT" className="block font-medium mb-2">
-                    Mint GVT
+                <label htmlFor="transferGVT" className="block font-medium mb-2">
+                    Deposit GVT to Sale
                 </label>
                 <input
                     type="number"
-                    name="mintGVT"
-                    value={formData.mintGVT}
+                    name="transferGVT"
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -93,7 +100,7 @@ const CreateTokenForm = () => {
                     type="submit"
                     className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                    Mint
+                    Transfer
                 </button>
             </div>
         </form>

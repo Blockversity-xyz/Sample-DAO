@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProposalList from "./components/DAO/ProposalList";
 import CreateProposal from "./components/DAO/CreateProposal";
 import Sidebar from "./components/Sidebar";
-import Vote from "./components/DAO/Vote";
+
 import PurchaseToken from "./components/PurchaseToken";
 
 
@@ -51,18 +51,6 @@ const App: React.FC = () => (
                     endAt: Date,
                     minHoldedGVTAmount: number
                   ): void {
-                    throw new Error("Function not implemented.");
-                  }}
-                />
-              }
-            />
-            <Route
-              path='/vote'
-              element={
-                <Vote
-                  proposalId={0}
-                  tokensOwned={0}
-                  onVote={function (proposalId: number, vote: boolean): void {
                     throw new Error("Function not implemented.");
                   }}
                 />

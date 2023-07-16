@@ -1,10 +1,10 @@
 export const getPurchasers = () => {
   return `
-import GTokenPublicSale from 0x3c407ff30723099a
+import GovTokenPublicSale from 0xc61f695fe4f80614
 
 
 pub fun main(): [Address] {
-    return GTokenPublicSale.getPurchasers()
+    return GovTokenPublicSale.getPurchasers()
 }
   `
 }

@@ -1,6 +1,6 @@
 export const newMinter = () => {
     return `
-import GovToken from 0x3c407ff30723099a
+import GovToken from 0xc61f695fe4f80614
 
 
 transaction (){

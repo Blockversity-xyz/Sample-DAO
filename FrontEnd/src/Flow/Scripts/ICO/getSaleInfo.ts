@@ -2,7 +2,7 @@
 
 export const getSaleInfo = () => {
   return `
-import GTokenPublicSale from 0x3c407ff30723099a
+import GovTokenPublicSale from 0xc61f695fe4f80614
 
 
 pub struct Info {
@@ -42,15 +42,15 @@ pub struct Info {
 pub fun main(): Info {
 
   return Info(
-    tokenName: GTokenPublicSale.tokenName,
-    tokenSymbol: GTokenPublicSale.tokenSymbol,
-    lockup: GTokenPublicSale.lockup,
-    tokenSupply: GTokenPublicSale.tokenSupply,
-    tokenPrice: GTokenPublicSale.tokenPrice,
-    saleStart: GTokenPublicSale.saleStart,
-    saleEnd: GTokenPublicSale.saleEnd,
-    minimumGoal:GTokenPublicSale.minimumGoal,
-    purchasers: GTokenPublicSale.getPurchasers()
+    tokenName: GovTokenPublicSale.tokenName,
+    tokenSymbol: GovTokenPublicSale.tokenSymbol,
+    lockup: GovTokenPublicSale.lockup,
+    tokenSupply: GovTokenPublicSale.tokenSupply,
+    tokenPrice: GovTokenPublicSale.tokenPrice,
+    saleStart: GovTokenPublicSale.saleStart,
+    saleEnd: GovTokenPublicSale.saleEnd,
+    minimumGoal:GovTokenPublicSale.minimumGoal,
+    purchasers: GovTokenPublicSale.getPurchasers()
   )
 }
   `;

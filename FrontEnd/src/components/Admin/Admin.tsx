@@ -16,14 +16,7 @@ type Tokenomics = {
 };
 
 
-const myTokenomics: Tokenomics = {
-  name: 'Tour Token',
-  symbol: 'YK',
-  address: '0x00000',
-  price: 0.000000000000000000,
-  maxSupply: 100000,
-  initialSupply: 100000
-};
+
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("createToken");
@@ -51,13 +44,13 @@ const AdminDashboard: React.FC = () => {
                 className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "createToken" ? "btn-primary text-green-500" : ""}`}
                 onClick={() => handleTabClick("createToken")}
               >
-                Mint Token
+                Create Token
               </button>
               <button
                 className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "sellToken" ? "btn-primary text-green-500" : ""}`}
                 onClick={() => handleTabClick("sellToken")}
               >
-                Sell Token
+                LaunchICO
               </button>
               <button
                 className={`btn btn-outline-secondary m-2 text-blue-400 ${activeTab === "manageToken" ? "btn-primary text-green-500" : ""}`}
@@ -103,7 +96,7 @@ const AdminDashboard: React.FC = () => {
             {activeTab === "sellToken" && <SellToken />}
             {activeTab === "manageToken" && <ManageToken />}
             {activeTab === "ico" && <ICO />}
-            {activeTab === "tokenomics" && <Tokennomics tokenomics={myTokenomics} />}
+            {activeTab === "tokenomics" && <Tokennomics />}
             {activeTab === "purchaserList" && <PurchaserList />}
           </div>
         </div>

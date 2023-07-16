@@ -1,8 +1,8 @@
 /** @format */
 
-export const signWhitelist = () => {
+export const signAllowList = () => {
   return `
-  import Whitelist from 0xa2f587819db4486e
+  import AllowList from 0xc61f695fe4f80614
 
   transaction {
     // Setup address variable

@@ -2,13 +2,13 @@
 
 export const getUserBalance = () => {
   return `
-import GovToken from 0x3c407ff30723099a
-import FungibleToken from 9a0766d93b6608b7
+import GToken from 0xc61f695fe4f80614
+import FungibleToken from 0xc61f695fe4f80614
 
 pub fun main(account: Address): UFix64 {
     let acct = getAccount(account)
-    let vaultRef = acct.getCapability(GovToken.VaultPublicPath)
-        .borrow<&GovToken.Vault{FungibleToken.Balance}>()
+    let vaultRef = acct.getCapability(GToken.VaultPublicPath)
+        .borrow<&GToken.Vault{FungibleToken.Balance}>()
         ?? panic("Could not borrow Balance reference to the Vault")
 
     return vaultRef.balance

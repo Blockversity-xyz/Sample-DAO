@@ -2,15 +2,15 @@
 
 export const addAdmin = () => {
   return `
-import GTokenPublicSale from 0x3c407ff30723099a
+import GovTokenPublicSale from 0xc61f695fe4f80614
 
 transaction {
   prepare(acct: AuthAccount) {
     // Claim a Admin resource
-    let admin <- GTokenPublicSale.claimAdmin()
+    let admin <- GovTokenPublicSale.claimAdmin()
     
     // Save the Admin to the account storage
-    acct.save(<-admin, to: /storage/GTokenPublicSaleAdmin)
+    acct.save(<-admin, to: /storage/GovTokenPublicSaleAdmin)
     
     log("you are now an admin")
   }

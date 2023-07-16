@@ -1,8 +1,8 @@
 export const purchaseBVT = () => {
   return `
-import FungibleToken from 0x9a0766d93b6608b7
-import FUSD from 0xe223d8a629e49c68
-import GTokenPublicSale from 0x3c407ff30723099a
+import FungibleToken from 0xc61f695fe4f80614
+import FUSD from 0xc61f695fe4f80614
+import GovTokenPublicSale from 0xc61f695fe4f80614
 
 transaction(amount: UFix64) {
 
@@ -12,11 +12,11 @@ transaction(amount: UFix64) {
 
     prepare(account: AuthAccount) {
 
-        let vaultRef = account.borrow<&FUSD.Vault>(from: /storage/FUSDVault2)
+        let vaultRef = account.borrow<&FUSD.Vault>(from: /storage/FUSDVault)
             ?? panic("Could not borrow reference to the owner's Vault!")
 
             log(vaultRef.balance)
-            
+
             if vaultRef.balance < amount {
     panic("Insufficient balance in the vault")
 }
@@ -28,7 +28,7 @@ transaction(amount: UFix64) {
     }
 
     execute {
-        GTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
+        GovTokenPublicSale.purchase(from: <-self.sentVault, address: self.buyerAddress)
     }
 }
   `

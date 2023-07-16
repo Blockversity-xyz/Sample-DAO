@@ -11,14 +11,18 @@ import { Buffer } from "buffer/";
 // ///////////////
 
 // // Scripts
-import { getBVTBalance as getBVTBalanceScript } from "./Scripts/ICO/getBVT_Balance";
+import { getGVTPublicSaleBalance as getGVTBalanceScript } from "./Scripts/ICO/getGVTPublicSaleBalance";
 import { getFUSDVaultBalance as getFUSDVaultBalanceScript } from "./Scripts/ICO/getFUSDVaultBalance";
 import { getFUSDVaultStatus as getFUSDVaultStatusScript } from "./Scripts/ICO/getFUSDVaultStatus";
 import { getIsSaleActive as getIsSaleActiveScript } from "./Scripts/ICO/getIsSaleActive";
 import { getSaleInfo as getSaleInfoScript } from "./Scripts/ICO/getSaleInfo";
 import { getPurchaseInfo as getPurchaseInfoScript } from "./Scripts/ICO/getPurchaseInfo";
 import { getPurchasers as getPurchasersScript } from "./Scripts/ICO/getPurchasers";
-
+import { getGovToken as getGtoken } from "./Scripts/ICO/getGovToken";
+import { getAllPurchases as getAllPurchaseScript } from "./Scripts/ICO/getAllPurchases";
+import { getMaxCap as getMax } from "./Scripts/ICO/getMaxCap";
+import { getMinCap as getMin } from "./Scripts/ICO/getMinCap";
+import { getVotedRecords as getRecords } from "./Scripts/DAO/getVotedRecords";
 
 // // Transactions
 import { deployerTransactionCode } from "./Transactions/ICO/deployICO";
@@ -32,7 +36,7 @@ import { withdrawBVT as withdrawBVTTransaction } from "./Transactions/ICO/Admin/
 import { setup_GVT as setup_BVTTransaction } from "./Transactions/ICO/setup_GVT";
 import { setTokenAdmin as setAdmin } from "./Transactions/ICO/setTokenAdmin";
 import { newMinter as newMinterGVT } from "./Transactions/ICO/Admin/newMinter";
-import { mintGVT as mint } from "./Transactions/ICO/Admin/mintGVT";
+import { burnTokens as burn } from "./Transactions/ICO/Admin/burnTokens";
 import { setup_fusd as setup_f } from "./Transactions/ICO/setup_fusd";
 import { addAdmin as setAddAdmin } from "./Transactions/ICO/Admin/LaunchICO/addAdmin";
 import { launchToken as launchTokenScript } from "./Transactions/ICO/Admin/LaunchICO/launchToken";
@@ -91,6 +95,7 @@ export const launchToken = async (
 
 ) => {
   return new Promise(async (resolve, reject) => {
+
     try {
       const transactionId = await fcl.mutate({
         cadence: launchTokenScript(),
@@ -112,6 +117,7 @@ export const launchToken = async (
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      alert("ICO Launched");
     } catch (e) {
       console.log(e);
       reject(false);
@@ -134,6 +140,7 @@ export const addAdmin = async () => {
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      resolve('Operation completed successfully');
     } catch (error) {
       console.log(error);
       reject(false);
@@ -164,13 +171,13 @@ export const newMinter = async () => {
 };
 
 // 
-export const mintGVT = async (
+export const burnTokens = async (
   amount: string //changed to string
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
-        cadence: mint(),
+        cadence: burn(),
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
@@ -253,6 +260,7 @@ export const setup_GVT = async () => {
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      resolve('Operation completed successfully');
     } catch (e) {
       console.log(e);
       reject(false);
@@ -293,6 +301,7 @@ export const purchaseBVT = async (amount: string) => {
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      resolve('Operation completed successfully'); 
     } catch (e) {
       console.log(e);
       reject(false);
@@ -314,6 +323,11 @@ export const depositBVT = async (amount: string) => {
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      
+      resolve('Operation completed successfully');
+
+      alert("GVT Token Transfered to the Sale Contract");
+      window.location.reload();
     } catch (e) {
       console.log(e);
       reject(false);
@@ -321,7 +335,7 @@ export const depositBVT = async (amount: string) => {
   });
 };
 
-// Withdraw BVT as an Admin
+// Withdraw GVT as an Admin
 export const withdrawBVT = async (amount: string) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -343,7 +357,7 @@ export const withdrawBVT = async (amount: string) => {
 };
 
 // Refund FUSD to an address as an Admin
-export const refund = async (address: string) => {
+export const refund = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
@@ -351,11 +365,11 @@ export const refund = async (address: string) => {
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
-        args: (arg: any, t: any) => [arg(address, t.Address)],
         limit: 500,
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
-      console.log(transaction); // The transactions status and events after being sealed
+      console.log(transaction);// The transactions status and events after being sealed
+      resolve('Operation completed successfully'); 
     } catch (e) {
       console.log(e);
       reject(false);
@@ -363,8 +377,8 @@ export const refund = async (address: string) => {
   });
 };
 
-// Distribute allocated BVT to one Address as an Admin
-export const distribute = async (address: string, allocationAmount: string) => {
+// Distribute allocated GVT to one Address as an Admin
+export const distribute = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
@@ -372,14 +386,11 @@ export const distribute = async (address: string, allocationAmount: string) => {
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
-        args: (arg: any, t: any) => [
-          arg(address, t.Address),
-          arg(allocationAmount, t.UFix64),
-        ],
         limit: 500,
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
+      resolve('Operation completed successfully');
     } catch (e) {
       console.log(e);
       reject(false);
@@ -431,10 +442,10 @@ export const unPause = async () => {
 
 // Get BVT Balance on the ICO smart contract.
 
-export const getBVTBalance = async () => {
+export const getGVTPublicSaleBalance = async () => {
   try {
     const response = await fcl.query({
-      cadence: getBVTBalanceScript(),
+      cadence: getGVTBalanceScript(),
       args: (arg: any, t: any) => [],
     });
     console.log(response);
@@ -455,6 +466,19 @@ export const getFUSDBalance = async () => {
   try {
     const response = await fcl.query({
       cadence: getFUSDVaultBalanceScript(),
+      args: (arg: any, t: any) => [],
+    });
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getGovToken = async () => {
+  try {
+    const response = await fcl.query({
+      cadence: getGtoken(),
       args: (arg: any, t: any) => [],
     });
     console.log(response);
@@ -530,6 +554,62 @@ export const getPurchasers = async () => {
   try {
     const response = await fcl.query({
       cadence: getPurchasersScript(),
+      args: (arg: any, t: any) => [],
+    });
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getAllPurchases = async () => {
+  try {
+    const response = await fcl.query({
+      cadence: getAllPurchaseScript(),
+      args: (arg: any, t: any) => [],
+    });
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
+export const getMaxCap = async () => {
+  try {
+    const response = await fcl.query({
+      cadence: getMax(),
+      args: (arg: any, t: any) => [],
+    });
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
+
+export const getMinCap = async () => {
+  try {
+    const response = await fcl.query({
+      cadence: getMin(),
+      args: (arg: any, t: any) => [],
+    });
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
+export const getVotedRecords= async () => {
+  try {
+    const response = await fcl.query({
+      cadence: getRecords(),
       args: (arg: any, t: any) => [],
     });
     console.log(response);

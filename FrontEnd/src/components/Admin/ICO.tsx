@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { getSaleInfo, getPurchasers } from "../../Flow/ICOActions";
+import { getSaleInfo, getPurchasers, getFUSDBalance, getMaxCap, getMinCap } from "../../Flow/ICOActions";
 
 
 const ICO: React.FC = () => {
 
   const [tokenInfo, setTokenInfo] = useState<any>({});
   const [purchasers, setPurchasers] = useState<string[]>([]);
+  const [fusdBalance, setFUSDBalance] = useState<number>(0);
+  const [getMaxCap, setMaxCap] = useState();
+  const [getMinCap, setMinCap] = useState<number>(0);
+
 
   useEffect(() => {
     getSaleInfo().then((info) => {
@@ -14,7 +18,12 @@ const ICO: React.FC = () => {
     getPurchasers().then((addresses) => {
       setPurchasers(addresses);
     });
+    getFUSDBalance().then((balance) => {
+      setFUSDBalance(balance);
+    });
+
   }, []);
+  console.log(tokenInfo);
 
   return (
     <div className="flex justify-center">
@@ -30,25 +39,20 @@ const ICO: React.FC = () => {
           </div>
 
           <div className="bg-gray-100 rounded-lg shadow p-4">
-            <h2 className="text-lg font-medium mb-2">TOTAL USERS</h2>
+            <h2 className="text-lg font-medium mb-2">TOTAL PURCHASERS</h2>
             <p className="text-3xl font-semibold">{purchasers.length}</p>
           </div>
 
           <div className="bg-gray-100 rounded-lg shadow p-4">
             <h2 className="text-lg font-medium mb-2">AMOUNT COLLECTED</h2>
-            <p className="text-3xl font-semibold">{/* Add amount collected here */}</p>
+            <p className="text-3xl font-semibold">{fusdBalance}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gray-100 rounded-lg shadow p-4">
-            <h2 className="text-lg font-medium mb-2">Max Cap</h2>
-            <p className="text-3xl font-semibold">{/* Add total amount here */}</p>
-          </div>
-
-          <div className="bg-gray-100 rounded-lg shadow p-4">
-            <h2 className="text-lg font-medium mb-2">SOLD</h2>
-            <p className="text-3xl font-semibold">{/* Add sold amount here */}</p>
+            <h2 className="text-lg font-medium mb-2">LockUp</h2>
+            <p className="text-3xl font-semibold">{tokenInfo.Lockup}</p>
           </div>
         </div>
       </div>

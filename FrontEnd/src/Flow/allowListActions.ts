@@ -19,20 +19,16 @@ export const currentUser = () => fcl.currentUser();
 import { getAllAddresses as getAllAddressesScript } from "./Scripts/get_all_addresses";
 import { getUserTimestamp as getUserTimestampScript } from "./Scripts/get_user_timestamp";
 
-// ICO Scripts
-import { getBVTBalance as getBVTBalanceScript } from "./Scripts/ICO/getBVT_Balance";
-import { getFUSDVaultBalance as getFUSDVaultBalanceScript } from "./Scripts/ICO/getFUSDVaultBalance";
-import { getIsSaleActive as getIsSaleActiveScript } from "./Scripts/ICO/getIsSaleActive";
-import { getPurchaseInfo as getPurchaseInfoScript } from "./Scripts/ICO/getPurchaseInfo";
-import { getPurchasers as getPurchasersScript } from "./Scripts/ICO/getPurchasers";
+
+
 
 // // Transactions
 
-import { signWhitelist as signWhitelistTransaction } from "./Transactions/sign_Whitelist";
+import { signAllowList as signWhitelistTransaction } from "./Transactions/sign_Whitelist";
 
 // // ****** Transactions Functions ****** //
 
-export const signWhitelist = async () => {
+export const signAllowList = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({

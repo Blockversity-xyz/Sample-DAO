@@ -17,15 +17,15 @@ type SellTokensFormData = {
 };
 
 const initialFormData: SellTokensFormData = {
-    tockenName: 'Test Token',
-    tokenSymbol: 'TT',
+    tockenName: 'Governance Token',
+    tokenSymbol: 'GVT',
     maxSupply: 1000000,
     totalSupply: 0,
     minCap: 100,
     maxCap: 100000,
     startDate: new Date(),
     endDate: new Date(),
-    tokenPrice: 1.0000,
+    tokenPrice: 0.0010,
     lockup: 0,
     minimumGoal: 100000000,
 };
@@ -35,7 +35,7 @@ export default function SellTokensForm() {
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const target = event.target;
-        const value = target.type;
+        const value = target.value;
         const name = target.name;
 
         setFormData({ ...formData, [name]: value });
@@ -47,8 +47,10 @@ export default function SellTokensForm() {
         try {
             const start = (formData.startDate.getTime() / 1000).toFixed(2);
             const end = (formData.endDate.getTime() / 1000).toFixed(2);
+            console.log(formData.tokenPrice);
 
-            launchToken(formData.tockenName, formData.tokenSymbol, formData.minCap.toFixed(2), formData.maxCap.toFixed(2), start, end, formData.tokenPrice.toFixed(2), formData.minimumGoal.toFixed(2), formData.lockup.toFixed(2));
+            let launch = launchToken(formData.tockenName, formData.tokenSymbol, formData.minCap.toFixed(2), formData.maxCap.toFixed(2), start, end, formData.tokenPrice.toFixed(6), formData.minimumGoal.toFixed(2), formData.lockup.toFixed(2));
+            console.log(launch);
             alert('Token Launched! successfully!');
         } catch (error) {
             console.log(error);
@@ -147,7 +149,7 @@ export default function SellTokensForm() {
                                 type="number"
                                 name="tokenPrice"
                                 value={formData.tokenPrice}
-                                onChange={(e) => setFormData({ ...formData, tokenPrice: parseInt(e.target.value) })}
+                                onChange={(e) => setFormData({ ...formData, tokenPrice: parseFloat(e.target.value) })}
                             />
                         </div>
                         <div className="text-lg mb-2">

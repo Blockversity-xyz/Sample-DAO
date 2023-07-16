@@ -1,7 +1,8 @@
 /** @format */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createProposal } from "../../Flow/GovernanceActions";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   onSubmit: (
@@ -20,7 +21,8 @@ export default function CreateProposal({ onSubmit }: Props) {
   const [options, setOptions] = useState<string[]>(["", ""]);
   const [startAt, setStartAt] = useState(new Date());
   const [endAt, setEndAt] = useState(new Date());
-  const [minHoldedGVTAmount, setMinHoldedGVTAmount] = useState(0.0);
+  const [minHoldedGVTAmount, setMinHoldedGVTAmount] = useState(10.0);
+  const navigate = useNavigate();
 
 
   const handleOptionChange = (index: number, value: string) => {
@@ -30,6 +32,8 @@ export default function CreateProposal({ onSubmit }: Props) {
       return newOptions;
     });
   };
+
+
 
   const handleAddOption = () => {
     setOptions((prevOptions) => [...prevOptions, ""]);
@@ -53,14 +57,24 @@ export default function CreateProposal({ onSubmit }: Props) {
 
       onSubmit(title, description, options, startAt, endAt, minHoldedGVTAmount);
       console.log(`Proposal ${proposalId} created`);
+      alert('Proposal created');
+      navigate("/proposal");
     } catch (err) {
       console.error(`Error creating proposal: ${err} startAt: ${typeof startAt} endAt: ${typeof endAt}`);
+      alert('Proposal created');
+      navigate("/proposal");
     }
+
   };
+
+
 
   return (
     <div className='flex flex-col items-center justify-start mt-10'>
       <div className='py-5 text-white'>
+        <p className='text-white mb-4'>
+          For the purpose of the demo, we have set to 10 the number of tokens required to vote or create a proposal.
+        </p>
         <form
           className='max-w-3xl mx-auto p-2'
           onSubmit={handleSubmit}>
@@ -158,20 +172,6 @@ export default function CreateProposal({ onSubmit }: Props) {
                   setEndAt(EndDate);
                 }
               }}
-            />
-          </div>
-          <div className='mb-4'>
-            <label
-              htmlFor='minHoldedGVTAmount'
-              className='block mb-2 font-bold'>
-              Minimum Governance Token Amount
-            </label>
-            <input
-              type='number'
-              id='minHoldedGVTAmount'
-              className='w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-              value={minHoldedGVTAmount}
-              onChange={(e) => setMinHoldedGVTAmount(parseInt(e.target.value))}
             />
           </div>
           <div className='mb-4'>
