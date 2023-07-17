@@ -81,7 +81,8 @@ go run ./tasks/main.go
 ## Testnet
 
 To deploy the contracts to the testnet, you need to have a testnet account. You can create one using the [Flow CLI](https://docs.onflow.org/flow-cli).
-Command to deploy contracts to testnet
+
+###Command to deploy contracts to testnet
 
 ```sh
 flow project deploy --network testnet

@@ -60,7 +60,7 @@ export default function CreateProposal({ onSubmit }: Props) {
       alert('Proposal created');
       navigate("/proposal");
     } catch (err) {
-      console.error(`Error creating proposal: ${err} startAt: ${typeof startAt} endAt: ${typeof endAt}`);
+      console.error(`Error creating proposal: ${err} startAt: ${typeof startAt} endAt: ${typeof endAt} minHoldedGVTAmount: ${typeof minHoldedGVTAmount}`);
       alert('Proposal created');
       navigate("/proposal");
     }
