@@ -17,6 +17,9 @@ pub contract AllowList {
 
         emit Signed(user: newAddress, timestamp: timestamp)
     }
+    pub fun checkList(addr: Address) : Bool{
+    return self.addressInfo[addr] == nil
+    }
 
     init() {
         self.addressInfo = {}

@@ -2,10 +2,10 @@ import FungibleToken from 0xc61f695fe4f80614
 import MetadataViews from 0xc61f695fe4f80614
 import FungibleTokenMetadataViews from 0xc61f695fe4f80614
 
-// Token contract for GovToken (GVT)
-pub contract GovToken: FungibleToken {
+// Token contract for GToken (GVT)
+pub contract GToken: FungibleToken {
 
-    /// Total supply of GovTokens in existence
+    /// Total supply of GTokens in existence
     pub var totalSupply: UFix64
 
     /// Storage and Public Paths
@@ -81,7 +81,7 @@ pub contract GovToken: FungibleToken {
         /// @param from: The Vault resource containing the funds that will be deposited
         ///
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @GovToken.Vault
+            let vault <- from as! @GToken.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -90,11 +90,11 @@ pub contract GovToken: FungibleToken {
 
         destroy() {
             if self.balance > 0.0 {
-                GovToken.totalSupply = GovToken.totalSupply - self.balance
+                GToken.totalSupply = GToken.totalSupply - self.balance
             }
         }
 
-        /// The way of getting all the Metadata Views implemented by GovToken
+        /// The way of getting all the Metadata Views implemented by GToken
         ///
         /// @return An array of Types defining the implemented views. This value will be used by
         ///         developers to know which parameter to pass to the resolveView() method.
@@ -105,7 +105,7 @@ pub contract GovToken: FungibleToken {
                     Type<FungibleTokenMetadataViews.FTVaultData>()]
         }
 
-        /// The way of getting a Metadata View out of the GovToken
+        /// The way of getting a Metadata View out of the GToken
         ///
         /// @param view: The Type of the desired view.
         /// @return A structure representing the requested view.
@@ -140,15 +140,15 @@ pub contract GovToken: FungibleToken {
                     )
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
                     return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: GovToken.VaultStoragePath,
-                        receiverPath: GovToken.ReceiverPublicPath,
-                        metadataPath: GovToken.VaultPublicPath,
-                        providerPath: /private/GovTokenVault,
-                        receiverLinkedType: Type<&GovToken.Vault{FungibleToken.Receiver}>(),
-                        metadataLinkedType: Type<&GovToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
-                        providerLinkedType: Type<&GovToken.Vault{FungibleToken.Provider}>(),
+                        storagePath: GToken.VaultStoragePath,
+                        receiverPath: GToken.ReceiverPublicPath,
+                        metadataPath: GToken.VaultPublicPath,
+                        providerPath: /private/GTokenVault,
+                        receiverLinkedType: Type<&GToken.Vault{FungibleToken.Receiver}>(),
+                        metadataLinkedType: Type<&GToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
+                        providerLinkedType: Type<&GToken.Vault{FungibleToken.Provider}>(),
                         createEmptyVaultFunction: (fun (): @FungibleToken.Vault {
-                            return <-GovToken.createEmptyVault()
+                            return <-GToken.createEmptyVault()
                         })
                     )
             }
@@ -167,7 +167,7 @@ pub contract GovToken: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-      pub fun claimAdmin(): @GovToken.Administrator {
+      pub fun claimAdmin(): @GToken.Administrator {
         return <- create Administrator()
     }
 
@@ -196,7 +196,7 @@ pub contract GovToken: FungibleToken {
 
  /// Function to create and send an Administrator resource to another account
 
-    pub fun claimAdminGVT(): @GovToken.Administrator {
+    pub fun claimAdminGVT(): @GToken.Administrator {
         return <- create Administrator()
     }
 
@@ -213,12 +213,12 @@ pub contract GovToken: FungibleToken {
         /// @param amount: The quantity of tokens to mint
         /// @return The Vault resource containing the minted tokens
         ///
-        pub fun mintTokens(amount: UFix64): @GovToken.Vault {
+        pub fun mintTokens(amount: UFix64): @GToken.Vault {
             pre {
                 amount > 0.0: "Amount minted must be greater than zero"
                 amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
             }
-            GovToken.totalSupply = GovToken.totalSupply + amount
+            GToken.totalSupply = GToken.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -241,7 +241,7 @@ pub contract GovToken: FungibleToken {
         /// @param from: The Vault resource containing the tokens to burn
         ///
         pub fun burnTokens(from: @FungibleToken.Vault) {
-            let vault <- from as! @GovToken.Vault
+            let vault <- from as! @GToken.Vault
             let amount = vault.balance
             destroy vault
             emit TokensBurned(amount: amount)
@@ -252,11 +252,11 @@ pub contract GovToken: FungibleToken {
         // Total supply of GVT is 300M
         self.totalSupply = 600_000_000.0
 
-        self.VaultStoragePath = /storage/GovTokenVault
-        self.VaultPublicPath = /public/GovTokenMetadata
-        self.ReceiverPublicPath = /public/GovTokenReceiver
-        self.AdminStoragePath = /storage/GovTokenAdmin
-        self.ViewerPublicPath = /public/GovTokenViewer
+        self.VaultStoragePath = /storage/GTokenVault
+        self.VaultPublicPath = /public/GTokenMetadata
+        self.ReceiverPublicPath = /public/GTokenReceiver
+        self.AdminStoragePath = /storage/GTokenAdmin
+        self.ViewerPublicPath = /public/GTokenViewer
 
         // Create the Vault with the total supply of tokens and save it in storage.
         let vault <- create Vault(balance: self.totalSupply)
@@ -264,21 +264,21 @@ pub contract GovToken: FungibleToken {
 
         // Create a public capability to the stored Vault that exposes
         // the `deposit` method through the `Receiver` interface.
-        self.account.link<&GovToken.Vault{FungibleToken.Receiver}>(
+        self.account.link<&GToken.Vault{FungibleToken.Receiver}>(
             self.ReceiverPublicPath,
             target: self.VaultStoragePath
         )
 
         // Create a public capability to the stored Vault that exposes
         // the `withdraw` method through the `Provider` interface.
-    self.account.link<&GovToken.Vault{FungibleToken.Provider}>(
+    self.account.link<&GToken.Vault{FungibleToken.Provider}>(
     self.VaultPublicPath,
     target: self.VaultStoragePath
 )
 
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field and the `resolveView` method through the `Balance` interface
-        self.account.link<&GovToken.Vault{FungibleToken.Balance}>(
+        self.account.link<&GToken.Vault{FungibleToken.Balance}>(
             self.ViewerPublicPath,
             target: self.VaultStoragePath
         )

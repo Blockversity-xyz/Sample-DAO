@@ -1,8 +1,8 @@
 import FungibleToken from 0xc61f695fe4f80614
 import NonFungibleToken from 0xc61f695fe4f80614
-import GovToken from 0xc61f695fe4f80614
+import GToken from 0xc61f695fe4f80614
 
-pub contract TokenExampleDAO {
+pub contract GTokenExampleDAO {
   access(contract) var Proposals: [Proposal]
   access(contract) var votedRecords: [{ Address: Int }]
   access(contract) var totalProposals: Int
@@ -21,7 +21,7 @@ pub contract TokenExampleDAO {
 
 
     // Function to allow users to claim a proposer resource
-    pub fun claimProposer(): @TokenExampleDAO.Proposer {
+    pub fun claimProposer(): @GTokenExampleDAO.Proposer {
         return <- create Proposer()
     }
 
@@ -45,7 +45,7 @@ pub contract TokenExampleDAO {
         minHoldedGVTAmount: UFix64?
         ) {
 
-        TokenExampleDAO.Proposals.append(Proposal(
+        GTokenExampleDAO.Proposals.append(Proposal(
          proposer: self.owner!.address,
          title: title,
          description: description,
@@ -55,8 +55,8 @@ pub contract TokenExampleDAO {
          minHoldedGVTAmount: minHoldedGVTAmount
         ))
 
-        TokenExampleDAO.votedRecords.append({})
-        TokenExampleDAO.totalProposals = TokenExampleDAO.totalProposals + 1
+        GTokenExampleDAO.votedRecords.append({})
+        GTokenExampleDAO.totalProposals = GTokenExampleDAO.totalProposals + 1
       }
 
       pub fun updateProposal(
@@ -69,10 +69,10 @@ pub contract TokenExampleDAO {
         ) {
 
         pre {
-          TokenExampleDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
+          GTokenExampleDAO.Proposals[id].proposer == self.owner!.address: "Only original proposer can update"
         }
 
-        TokenExampleDAO.Proposals[id].update(
+        GTokenExampleDAO.Proposals[id].update(
           title: title,
           description: description,
           startAt: startAt,
@@ -110,9 +110,9 @@ pub contract TokenExampleDAO {
     pub fun vote(ProposalId: UInt64, optionIndex: Int) {
       pre {
         self.records[ProposalId] == nil: "Already voted"
-        optionIndex < TokenExampleDAO.Proposals[ProposalId].options.length: "Invalid option"
+        optionIndex < GTokenExampleDAO.Proposals[ProposalId].options.length: "Invalid option"
       }
-      TokenExampleDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
+      GTokenExampleDAO.Proposals[ProposalId].vote(voterAddr: self.owner!.address, optionIndex: optionIndex)
       self.records[ProposalId] = optionIndex
     };
 
@@ -150,7 +150,8 @@ pub contract TokenExampleDAO {
       pre {
         title.length <= 1000: "New title too long"
         description.length <= 1000: "New description too long"
-        TokenExampleDAO.getHoldedGVT(address: proposer) >=  TokenExampleDAO.tokensForProposal: "Proposer doesn't have enough GVT"
+        //GTokenExampleDAO.getHoldedGVT(address: proposer) >=  GTokenExampleDAO.tokensForProposal: "Proposer doesn't have enough GVT"
+        GTokenExampleDAO.getHoldedGVT(address: proposer) <=  GTokenExampleDAO.tokensForProposal: "Proposer doesn't have enough GVT"
       }
 
       self.proposer = proposer
@@ -164,7 +165,7 @@ pub contract TokenExampleDAO {
         self.votesCountActual.append(0)
       }
 
-      self.id = TokenExampleDAO.totalProposals
+      self.id = GTokenExampleDAO.totalProposals
 
       self.sealed = false
       self.countIndex = 0
@@ -200,15 +201,15 @@ pub contract TokenExampleDAO {
       pre {
         self.isStarted(): "Vote not started"
         !self.isEnded(): "Vote ended"
-        TokenExampleDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
+        GTokenExampleDAO.votedRecords[self.id][voterAddr] == nil: "Already voted"
       }
 
-      let voterGVT = TokenExampleDAO.getHoldedGVT(address: voterAddr)
+      let voterGVT = GTokenExampleDAO.getHoldedGVT(address: voterAddr)
 
       // assert(voterGVT >= self.minHoldedGVTAmount, message: "Not enought GVT in your Vault to vote")
       assert(voterGVT < self.minHoldedGVTAmount, message: "Not enought GVT in your Vault to vote")
 
-      TokenExampleDAO.votedRecords[self.id][voterAddr] = optionIndex
+      GTokenExampleDAO.votedRecords[self.id][voterAddr] = optionIndex
 
       emit VoteSubmitted(Voter: voterAddr, ProposalId: self.id, OptionIndex: optionIndex)
     }
@@ -222,7 +223,7 @@ pub contract TokenExampleDAO {
         return self.votesCountActual
       }
       // Fetch the keys of everyone who has voted on this proposal
-      let votedList = TokenExampleDAO.votedRecords[self.id].keys
+      let votedList = GTokenExampleDAO.votedRecords[self.id].keys
       // Count from the last time you counted
       var batchEnd = self.countIndex + size
       // If the count index is bigger than the number of voters
@@ -233,7 +234,7 @@ pub contract TokenExampleDAO {
 
       while self.countIndex != batchEnd {
         let address = votedList[self.countIndex]
-        let votedOptionIndex = TokenExampleDAO.votedRecords[self.id][address]!
+        let votedOptionIndex = GTokenExampleDAO.votedRecords[self.id][address]!
         self.votesCountActual[votedOptionIndex] = self.votesCountActual[votedOptionIndex] + 1
 
         self.countIndex = self.countIndex + 1
@@ -253,14 +254,14 @@ pub contract TokenExampleDAO {
     }
 
     pub fun getTotalVoted(): Int {
-      return TokenExampleDAO.votedRecords[self.id].keys.length
+      return GTokenExampleDAO.votedRecords[self.id].keys.length
     }
   }
 
   pub fun getHoldedGVT(address: Address): UFix64 {
     let acct = getAccount(address)
-    let vaultRef = acct.getCapability(GovToken.VaultPublicPath)
-        .borrow<&GovToken.Vault{FungibleToken.Balance}>()
+    let vaultRef = acct.getCapability(GToken.VaultPublicPath)
+        .borrow<&GToken.Vault{FungibleToken.Balance}>()
         ?? panic("Could not borrow Balance reference to the Vault")
 
     return vaultRef.balance
@@ -282,7 +283,11 @@ pub contract TokenExampleDAO {
     return self.Proposals[ProposalId].count(size: maxSize)
   }
 
-  pub fun initVoter(): @TokenExampleDAO.Voter {
+  pub fun getVotedRecords(): [{ Address: Int }] {
+    return self.votedRecords
+}
+
+  pub fun initVoter(): @GTokenExampleDAO.Voter {
     return <- create Voter()
   }
 
@@ -292,14 +297,14 @@ pub contract TokenExampleDAO {
     self.totalProposals = 0
     self.tokensForProposal = 10.0
  
-    self.ProposerStoragePath = /storage/TokenExampleDAOProposer
-    self.VoterStoragePath = /storage/TokenExampleDAOVoter
-    self.VoterPublicPath = /public/TokenExampleDAOVoter
-    self.VoterPath = /private/TokenExampleDAOVoter
+    self.ProposerStoragePath = /storage/GTokenExampleDAOProposer
+    self.VoterStoragePath = /storage/GTokenExampleDAOVoter
+    self.VoterPublicPath = /public/GTokenExampleDAOVoter
+    self.VoterPath = /private/GTokenExampleDAOVoter
 
     self.account.save(<-create Proposer(), to: self.ProposerStoragePath)
     self.account.save(<-create Voter(), to: self.VoterStoragePath)
-    self.account.link<&TokenExampleDAO.Voter>(
+    self.account.link<&GTokenExampleDAO.Voter>(
             self.VoterPublicPath,
             target: self.VoterStoragePath
         )

@@ -1,13 +1,9 @@
 {
 	"contracts": {
+		"AllowList": "./contracts/AllowList.cdc",
 		"Debug": "./contracts/utility/Debug.cdc",
 		"ExampleDAO": "./contracts/DAO/FlowExampleDAO.cdc",
-		"FUSD": {
-			"source": "./contracts/utility/FUSD.cdc",
-			"aliases": {
-				"testnet": "e223d8a629e49c68"
-			}
-		},
+		"FUSD": "./contracts/utility/FUSD.cdc",
 		"FlowToken": {
 			"source": "./contracts/utility/FlowToken.cdc",
 			"aliases": {
@@ -18,16 +14,12 @@
 		},
 		"FungibleToken": "./contracts/utility/FungibleToken.cdc",
 		"FungibleTokenMetadataViews": "./contracts/utility/FungibleTokenMetadataViews.cdc",
+		"GToken": "./contracts/GToken.cdc",
+		"GTokenExampleDAO": "./contracts/DAO/GTokenExampleDAO.cdc",
 		"GTokenPublicSale": "./contracts/sales/GTokenSale.cdc",
 		"GovToken": "./contracts/GovToken.cdc",
-		"GovTokenPublicSale": "./contracts/sales/GTokenSale.cdc",
-		"MetadataViews": {
-			"source": "./contracts/utility/MetadataViews.cdc",
-			"aliases": {
-				"mainnet": "1d7e57aa55817448",
-				"testnet": "631e88ae7f1d7c20"
-			}
-		},
+		"GovTokenPublicSale": "./contracts/sales/GovTokenSale.cdc",
+		"MetadataViews": "./contracts/utility/MetadataViews.cdc",
 		"NonFungibleToken": {
 			"source": "./contracts/utility/NonFungibleToken.cdc",
 			"aliases": {
@@ -36,7 +28,6 @@
 			}
 		},
 		"TokenExampleDAO": "./contracts/DAO/TokenExampleDAO.cdc",
-		"Whitelist": "./contracts/AllowList.cdc",
 		"exampleToken": "./contracts/exampleToken.cdc",
 		"testFT": "./contracts/utility/testFT.cdc"
 	},
@@ -79,11 +70,11 @@
 			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
 		},
 		"testnet-account": {
-			"address": "3c407ff30723099a",
+			"address": "c61f695fe4f80614",
 			"key": {
 				"type": "hex",
 				"signatureAlgorithm": "ECDSA_secp256k1",
-				"privateKey": "f9bcd0de16c6c694b7fd72e6082c328e53a1c0526286f6bd09563c7ecebca6fd"
+				"privateKey": "206f8f8b5c188d4bb1b7dfa7dd3d4b5445ff90ebc19029f417efd751dc9a44d9"
 			}
 		}
 	},
@@ -102,9 +93,15 @@
 		},
 		"testnet": {
 			"testnet-account": [
-				"GovToken",
-				"GTokenPublicSale",
-				"FUSD"
+				"FungibleToken",
+				"FUSD",
+				"NonFungibleToken",
+				"MetadataViews",
+				"FungibleTokenMetadataViews",
+				"GToken",
+				"GovTokenPublicSale",
+				"GTokenExampleDAO",
+				"AllowList"
 			]
 		}
 	}

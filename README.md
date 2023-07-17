@@ -1,20 +1,5 @@
 
-```Flow testnet commands:
-flow project deploy --network=testnet ,
-
-flow accounts create --key YOUR_PRIVATE_KEY --host access.devnet.nodes.onflow.org:9000 --signer YOUR_ACCOUNT_ADDRESS
-
-flow transactions send ./transactions/ExampleDAO/ExampleDAO.cdc --network=testnet --signer=testnet-account
-
-flow scripts execute ./scripts/ExampleDAO/ExampleDAO.cdc --network=testnet
-
-flow accounts update-contract ./contracts/sales/GTokenSale.cdc --network=testnet --signer=testnet-account
-
-flow transactions send --network=testnet --code=./transactions/add_admin.cdc \
-  --args="[{\"type\": \"Address\", \"value\": \"0xCONTRACT_ADDRESS\"},
-           {\"type\": \"Address\", \"value\": \"0xRECEIVER_ADDRESS\"}]"
-```
-
+  
 # Sample-DAO
 
 
@@ -109,3 +94,39 @@ flow accounts create \
   --signer YOUR_ACCOUNT_ADDRESS
 ```
 
+### Some useful commands
+
+```sh
+flow project deploy --network testnet
+```
+
+```sh
+flow transactions send ./transactions/SetupAccount.cdc --network testnet
+```
+
+```sh
+flow transactions send ./transactions/SetupAccount.cdc --network testnet
+```
+
+```sh
+flow scripts execute ./scripts/GetAccount.cdc --network testnet
+```
+
+```sh
+
+
+```Flow testnet commands:
+flow project deploy --network=testnet ,
+
+flow accounts create --key YOUR_PRIVATE_KEY --host access.devnet.nodes.onflow.org:9000 --signer YOUR_ACCOUNT_ADDRESS
+
+flow transactions send ./transactions/ExampleDAO/ExampleDAO.cdc --network=testnet --signer=testnet-account
+
+flow scripts execute ./scripts/ExampleDAO/ExampleDAO.cdc --network=testnet
+
+flow accounts update-contract ./contracts/sales/GTokenSale.cdc --network=testnet --signer=testnet-account
+
+flow transactions send --network=testnet --code=./transactions/add_admin.cdc \
+  --args="[{\"type\": \"Address\", \"value\": \"0xCONTRACT_ADDRESS\"},
+           {\"type\": \"Address\", \"value\": \"0xRECEIVER_ADDRESS\"}]"
+```

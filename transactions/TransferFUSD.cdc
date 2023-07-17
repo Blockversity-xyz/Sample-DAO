@@ -1,6 +1,6 @@
 
-import FungibleToken from 0x9a0766d93b6608b7
-import FUSD from 0xe223d8a629e49c68
+import FungibleToken from 0xc61f695fe4f80614
+import FUSD from 0xc61f695fe4f80614
 
 // This transaction is a template for a transaction that
 // could be used by anyone to send FUSD tokens to another account
@@ -21,11 +21,11 @@ transaction {
 
   execute {
     // Get the recipient's public account object
-    let recipient = getAccount(0x79e61d7855d74a97)
+    let recipient = getAccount(0x51bf9d7ebcb0c39d)
 
     // Get the recipient's Receiver reference to their Vault
     // by borrowing the reference from the public capability
-    let receiverRef = recipient.getCapability(/public/FUSDReceiver)
+    let receiverRef = recipient.getCapability(/public/fusdReceiver)
                       .borrow<&FUSD.Vault{FungibleToken.Receiver}>()
                       ?? panic("Could not borrow a reference to the receiver")
 
