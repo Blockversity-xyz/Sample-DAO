@@ -57,13 +57,36 @@ Here is what you need to be able to run the project.
 
 The smart contracts are written in Cadence and are located in the `contracts` folder. The contracts are deployed to the testnet using the [Flow CLI](https://docs.onflow.org/flow-cli).
 
+```sh
+flow project deploy --network testnet
+```
+
+With Flow CLI you can also update the contracts on the testnet.
+
+```sh
+flow accounts update-contract ./contracts/ExampleDAO/ExampleDAO.cdc --network testnet --signer testnet-account
+```
+
+
 ### Transactions
 
 The transactions are written in Cadence and are located in the `transactions` folder. The transactions are deployed to the testnet using the [Flow CLI](https://docs.onflow.org/flow-cli).
 
+```sh
+flow transactions send ./transactions/Action.cdc --network testnet
+```
+
+
+
+
 ### Scripts
 
 The scripts are written in Cadence and are located in the `scripts` folder. The scripts are executed on the testnet using the [Flow CLI](https://docs.onflow.org/flow-cli).
+
+```sh
+flow scripts execute ./scripts/GetAccount.cdc --network testnet
+```
+
 
 
 ## Testing
@@ -82,7 +105,7 @@ go run ./tasks/main.go
 
 To deploy the contracts to the testnet, you need to have a testnet account. You can create one using the [Flow CLI](https://docs.onflow.org/flow-cli).
 
-###Command to deploy contracts to testnet
+### Some useful Flow CLI Commands
 
 ```sh
 flow project deploy --network testnet
@@ -106,28 +129,6 @@ flow transactions send ./transactions/SetupAccount.cdc --network testnet
 ```
 
 ```sh
-flow transactions send ./transactions/SetupAccount.cdc --network testnet
-```
-
-```sh
-flow scripts execute ./scripts/GetAccount.cdc --network testnet
-```
-
-```sh
-
-
-```Flow testnet commands:
-flow project deploy --network=testnet ,
-
 flow accounts create --key YOUR_PRIVATE_KEY --host access.devnet.nodes.onflow.org:9000 --signer YOUR_ACCOUNT_ADDRESS
-
-flow transactions send ./transactions/ExampleDAO/ExampleDAO.cdc --network=testnet --signer=testnet-account
-
-flow scripts execute ./scripts/ExampleDAO/ExampleDAO.cdc --network=testnet
-
-flow accounts update-contract ./contracts/sales/GTokenSale.cdc --network=testnet --signer=testnet-account
-
-flow transactions send --network=testnet --code=./transactions/add_admin.cdc \
-  --args="[{\"type\": \"Address\", \"value\": \"0xCONTRACT_ADDRESS\"},
-           {\"type\": \"Address\", \"value\": \"0xRECEIVER_ADDRESS\"}]"
 ```
+
