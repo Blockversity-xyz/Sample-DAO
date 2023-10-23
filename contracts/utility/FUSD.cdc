@@ -214,6 +214,13 @@ pub contract FUSD: FungibleToken {
             /public/fusdBalance,
             target: /storage/FUSDVault
         )
+        // Create a public capability to the Vault that only exposes
+        // the withdraw function through the Provider interface
+        self.account.link<&FUSD.Vault{FungibleToken.Provider}>(
+            /public/fusdProvider,
+            target: /storage/FUSDVault
+        )
+        
         self.account.save(<-admin, to: self.AdminStoragePath)
 
         // Emit an event that shows that the contract was initialized

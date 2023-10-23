@@ -1,7 +1,7 @@
 
 export const createVoter = () => {
   return `
-import GTokenExampleDAO from 0xc61f695fe4f80614
+import GTokenExampleDAO from 0xba85020e56e96b74
 
 transaction {
 

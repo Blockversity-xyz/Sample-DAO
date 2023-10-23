@@ -1,8 +1,8 @@
 import FungibleToken from 0xc61f695fe4f80614
 import NonFungibleToken from 0xc61f695fe4f80614
-import GToken from 0xc61f695fe4f80614
-import FUSD from 0xc61f695fe4f80614
-import AllowList from 0xc61f695fe4f80614
+import GToken from 0xba85020e56e96b74
+import FiatToken from 0xa4f61a30f7716c6f
+import AllowList from 0xba85020e56e96b74
 
 
 pub contract GovTokenPublicSale {
@@ -21,9 +21,9 @@ pub contract GovTokenPublicSale {
   pub var isSaleActive: Bool
   pub var isLaunched: Bool
   pub var lockup : UFix64
-  // GVT community sale purchase cap (in FUSD)
+  // GVT community sale purchase cap (in FiatToken)
   access(contract) var maxCap: UFix64
-  // Minimum amount to buy  (in FUSD)
+  // Minimum amount to buy  (in FiatToken)
   access(contract) var minCap: UFix64
   // All purchase records
   access(contract) var purchases: {Address: PurchaseInfo}
@@ -50,8 +50,8 @@ pub contract GovTokenPublicSale {
   // gVT holder vault
   access(contract) let gvtVault: @GToken.Vault
 
-  // FUSD holder vault
-  access(contract) let fusdVault: @FUSD.Vault
+  // FiatToken holder vault
+  access(contract) let FiatTokenVault: @FiatToken.Vault
 
   // Workaround random number generator
   pub resource Random {}
@@ -59,9 +59,9 @@ pub contract GovTokenPublicSale {
   pub struct PurchaseInfo {
       // Purchaser address
       pub let address: Address
-      // Purchase amount in FUSD
+      // Purchase amount in FiatToken
       pub(set) var amount: UFix64
-      // Refunded amount in FUSD
+      // Refunded amount in FiatToken
       pub(set) var refundAmount: UFix64
       // Random ticked ID
       pub let ticketId: UInt64
@@ -162,12 +162,12 @@ pub contract GovTokenPublicSale {
             GovTokenPublicSale.isSaleActive = false
         }
 
-      pub fun withdrawFUSD(amount: UFix64): @FungibleToken.Vault {
+      pub fun withdrawFiatToken(amount: UFix64): @FungibleToken.Vault {
         pre {
           // Avoid withdrawing funds before the sale ends, in case it needs refunding
           GovTokenPublicSale.saleHasEnded() == false: "Token sale hasn't ended"
         }
-        return <- GovTokenPublicSale.fusdVault.withdraw(amount: amount)
+        return <- GovTokenPublicSale.FiatTokenVault.withdraw(amount: amount)
       }
 
       pub fun depositGVT(from: @FungibleToken.Vault) {
@@ -176,20 +176,18 @@ pub contract GovTokenPublicSale {
     }
 
   // GVT purchase method
-  // User pays FUSD and get unlocked SampleToken
-  pub fun purchase(from: @FUSD.Vault, address: Address) {
+  // User pays FiatToken and get unlocked SampleToken
+  pub fun purchase(from: @FiatToken.Vault, address: Address) {
       pre {
-          //self.saleHasEnded() : "Token sale has ended"
           self.isSaleOngoing() : "Token sale has not ended"
-          //!self.isSaleActive : "Token sale is not active"
           self.isSaleActive : "Token sale is still active"
 
       }
 
       let amount = from.balance
-      self.fusdVault.deposit(from: <- from)
+      self.FiatTokenVault.deposit(from: <- from)
 
-      // Divide the amount of FUSD by the token price
+      // Divide the amount of FiatToken by the token price
       let GVTAmount = amount / self.tokenPrice
       let purchaseInfo = PurchaseInfo(address: address, amount: GVTAmount)
       self.purchases[address] = purchaseInfo
@@ -198,11 +196,9 @@ pub contract GovTokenPublicSale {
   }
 
   // Distribute GVT
-  // If ICO doesn't reach minimum goal, all FUSD is refunded
+  // If ICO doesn't reach minimum goal, all FiatToken is refunded
   pub fun distribute() {
     pre {
-      // Avoid withdrawing funds before the sale ends, in case it needs refunding
-        // GovTokenPublicSale.saleHasEnded(): "Token sale hasn't ended"
          GovTokenPublicSale.isSaleOngoing(): "Token sale hasn't ended"
          GovTokenPublicSale.gvtVault.balance <= self.minCap: "The min cap wasn't reached"
          GovTokenPublicSale.gvtVault.balance >= self.minCap: "The Max cap wasn't reached"
@@ -214,7 +210,7 @@ pub contract GovTokenPublicSale {
     // Distribute GVT purchase to all addresses in the list
     for address in Purchasers {
       let purchaseInfo = GovTokenPublicSale.getPurchase(address: address)!
-      let receiverRef = getAccount(address).getCapability(GToken.ReceiverPublicPath)
+      let receiverRef = getAccount(address).getCapability(/public/DemoGTokenReceiver)
           .borrow<&{FungibleToken.Receiver}>()
           ?? panic("Could not borrow GToken receiver reference")
 
@@ -238,21 +234,21 @@ pub contract GovTokenPublicSale {
 
     let Purchasers = GovTokenPublicSale.getPurchasers()
 
-    // Refund FUSD purchase to all addresses in the list
+    // Refund FiatToken purchase to all addresses in the list
     for address in Purchasers {
       let purchaseInfo = GovTokenPublicSale.getPurchase(address: address)!
-      let receiverRef = getAccount(address).getCapability(/public/fusdReceiver)
+      let receiverRef = getAccount(address).getCapability(/public/FVaultReceiverPubPath)
           .borrow<&{FungibleToken.Receiver}>()
-          ?? panic("Could not borrow FUSD receiver reference")
+          ?? panic("Could not borrow FiatToken receiver reference")
 
-      let FusdAmount = purchaseInfo.amount * self.tokenPrice
-      let fusdVault <- GovTokenPublicSale.fusdVault.withdraw(amount: FusdAmount)
+      let FiatTokenAmount = purchaseInfo.amount * self.tokenPrice
+      let FiatTokenVault <- GovTokenPublicSale.FiatTokenVault.withdraw(amount: FiatTokenAmount)
       // Set the state of the purchase to REFUNDED
       purchaseInfo.state = PurchaseState.refunded
       GovTokenPublicSale.purchases[address] = purchaseInfo
       // Deposit the withdrawn tokens into the recipient's receiver
-      receiverRef.deposit(from: <- fusdVault)
-      emit Refunded(address: address, amount: FusdAmount)
+      receiverRef.deposit(from: <- FiatTokenVault)
+      emit Refunded(address: address, amount: FiatTokenAmount)
     }
   }
 
@@ -270,10 +266,10 @@ pub contract GovTokenPublicSale {
     return GovTokenPublicSale.gvtVault.balance
   }
 
-  // Get Sale FUSD balance
+  // Get Sale FiatToken balance
 
-  pub fun getSaleFUSDBalance(): UFix64 {
-    return GovTokenPublicSale.fusdVault.balance
+  pub fun getSaleFiatTokenBalance(): UFix64 {
+    return GovTokenPublicSale.FiatTokenVault.balance
   }
 
 
@@ -310,21 +306,21 @@ pub contract GovTokenPublicSale {
     self.isSaleActive = true
     // Total supply of GVT is 600M
     self.tokenSupply = 600_000_000.0
-    // For each 1FUSD buyers get 4GVT
+    // For each 1FiatToken buyers get 4GVT
     self.tokenPrice = 0.25
     self.saleStart = getCurrentBlock().timestamp
     self.saleEnd = self.saleStart + 2_259_000.0 // 30 days
     // A minimum of $20M is required
     self.minimumGoal = 20_000_00.0
-    // Each user can purchase at most 5000 FUSD worth of GVT
+    // Each user can purchase at most 5000 FiatToken worth of GVT
     self.maxCap = 5000.0
-    // Each user has to purchase at least 100 FUSD worth of GVT
+    // Each user has to purchase at least 100 FiatToken worth of GVT
     self.minCap = 100.0
     self.purchases = {}
 
 
     self.gvtVault <- GToken.createEmptyVault()
-    self.fusdVault <- FUSD.createEmptyVault()
+    self.FiatTokenVault <- FiatToken.createEmptyVault()
 
      self.SaleAdminStoragePath = /storage/GovTokenPublicSaleAdmin
 

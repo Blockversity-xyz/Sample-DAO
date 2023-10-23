@@ -1,14 +1,14 @@
 export const burnTokens = () => {
     return `
 import FungibleToken from 0xc61f695fe4f80614
-import GToken from 0xc61f695fe4f80614
-import GovTokenPublicSale from 0xc61f695fe4f80614
+import GToken from 0xba85020e56e96b74
+import GovTokenPublicSale from 0xba85020e56e96b74
 
 transaction(amount: UFix64) {
 
     prepare(signer: AuthAccount) {
 
-     let provider = getAccount(0xc61f695fe4f80614)
+     let provider = getAccount(0xba85020e56e96b74)
         let providerVaultRef = provider
             .getCapability(GToken.VaultPublicPath)
             .borrow<&GToken.Vault{FungibleToken.Provider}>()
@@ -18,7 +18,7 @@ transaction(amount: UFix64) {
         let vault <- providerVaultRef.withdraw(amount: amount)
 
 
-            let burnerRef = signer.borrow<&GToken.Burner>(from: /storage/GTBurner)
+            let burnerRef = signer.borrow<&GToken.Burner>(from: /storage/DemoGTBurner)
             ?? panic("Could not borrow a reference to the Burner resource")
 
         // Burn tokens by calling the burnTokens function on the burner resource

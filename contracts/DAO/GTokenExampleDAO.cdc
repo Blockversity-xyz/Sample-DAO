@@ -1,6 +1,6 @@
 import FungibleToken from 0xc61f695fe4f80614
 import NonFungibleToken from 0xc61f695fe4f80614
-import GToken from 0xc61f695fe4f80614
+import GToken from 0xba85020e56e96b74
 
 pub contract GTokenExampleDAO {
   access(contract) var Proposals: [Proposal]
@@ -260,7 +260,7 @@ pub contract GTokenExampleDAO {
 
   pub fun getHoldedGVT(address: Address): UFix64 {
     let acct = getAccount(address)
-    let vaultRef = acct.getCapability(GToken.VaultPublicPath)
+    let vaultRef = acct.getCapability(/public/DemoGTokenBalanceResolver)
         .borrow<&GToken.Vault{FungibleToken.Balance}>()
         ?? panic("Could not borrow Balance reference to the Vault")
 

@@ -1,7 +1,7 @@
 export const depositBVT = () => {
   return `
-import GovTokenPublicSale from 0xc61f695fe4f80614
-import GToken from 0xc61f695fe4f80614
+import GovTokenPublicSale from 0xba85020e56e96b74
+import GToken from 0xba85020e56e96b74
 import FungibleToken from 0xc61f695fe4f80614
 
 transaction(amount: UFix64) {
@@ -12,7 +12,7 @@ transaction(amount: UFix64) {
 
     prepare(account: AuthAccount) {
 
-        let provider = getAccount(0xc61f695fe4f80614)
+        let provider = getAccount(0xba85020e56e96b74)
 
         let providerVaultRef = provider
             .getCapability(GToken.VaultPublicPath)
@@ -21,10 +21,10 @@ transaction(amount: UFix64) {
 
         // Withdraw tokens from provider's vault
 
-        self.adminRef = account.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = account.borrow<&GovTokenPublicSale.Admin>(from: /storage/DemoGovTokenPublicSaleAdmin)
 			?? panic("Could not borrow reference to the Sale admin!")
 
-        let vaultRef = account.borrow<&GToken.Vault>(from: GToken.VaultStoragePath)
+        let vaultRef = account.borrow<&GToken.Vault>(from: /storage/DemoGToken)
 			?? panic("Could not borrow reference to the owner's Vault!")
 
         self.sentVault <- providerVaultRef.withdraw(amount: amount)

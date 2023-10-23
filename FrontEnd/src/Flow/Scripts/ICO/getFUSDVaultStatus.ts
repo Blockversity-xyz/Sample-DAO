@@ -2,7 +2,7 @@
 export const getFUSDVaultStatus = () => {
   return `
 import FungibleToken from 0xc61f695fe4f80614
-import FUSD from 0xc61f695fe4f80614
+import FUSD from 0xba85020e56e96b74
 
 pub fun main(address: Address): Bool {
     let account = getAccount(address)

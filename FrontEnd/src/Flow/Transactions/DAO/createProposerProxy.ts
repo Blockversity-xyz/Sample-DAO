@@ -2,7 +2,7 @@
 
 export const setProxy = () => {
   return `
-import GTokenExampleDAO from 0xc61f695fe4f80614
+import GTokenExampleDAO from 0xba85020e56e96b74
 
 transaction {
 
@@ -10,7 +10,7 @@ transaction {
 
     let voter <- GTokenExampleDAO.initVoter()
 
-    signer.save(<-voter, to: /storage/GTokenExampleDAOVoter)
+    signer.save(<-voter, to: /storage/DemoGTokenExampleDAOVoter)
     signer.link<&GTokenExampleDAO.Voter>(
       /public/GTokenExampleDAOVoter,
       target: /storage/GTokenExampleDAOVoter

@@ -20,8 +20,30 @@ import { setProxy as setProxyScript } from "./Transactions/DAO/createProposerPro
 import { depositProposer as depositProposerScript } from "./Transactions/DAO/depositProposer";
 import { createProposal as createProposalTransaction } from "./Transactions/DAO/createProposal";
 import { vote as voteTransaction } from "./Transactions/DAO/vote";
+import { transfer_USDC as transfer_USDCTransaction } from "./Transactions/ICO/transferUSDC";
 
 // // ****** Transactions Functions ****** //
+
+
+export const transfer_USDC = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: transfer_USDCTransaction(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (error) {
+      console.log(error);
+      reject(false);
+    }
+  });
+};
 
 export const setProxy = async () => {
   return new Promise(async (resolve, reject) => {

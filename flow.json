@@ -4,6 +4,7 @@
 		"Debug": "./contracts/utility/Debug.cdc",
 		"ExampleDAO": "./contracts/DAO/FlowExampleDAO.cdc",
 		"FUSD": "./contracts/utility/FUSD.cdc",
+		"FiatToken": "./contracts/utility/FiatToken.cdc",
 		"FlowToken": {
 			"source": "./contracts/utility/FlowToken.cdc",
 			"aliases": {
@@ -27,6 +28,7 @@
 				"testnet": "631e88ae7f1d7c20"
 			}
 		},
+		"OnChainMultiSig": "./contracts/utility/MultiSig.cdc",
 		"TokenExampleDAO": "./contracts/DAO/TokenExampleDAO.cdc",
 		"exampleToken": "./contracts/exampleToken.cdc",
 		"testFT": "./contracts/utility/testFT.cdc"
@@ -37,6 +39,13 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"accounts": {
+		"Dao": {
+			"address": "ba85020e56e96b74",
+			"key": {
+				"type": "file",
+				"location": "Dao.pkey"
+			}
+		},
 		"emulator-3": {
 			"address": "f3fcd2c1a78f5eee",
 			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
@@ -70,12 +79,8 @@
 			"key": "d5457a187e9642a8e49d4032b3b4f85c92da7202c79681d9302c6e444e7033a8"
 		},
 		"testnet-account": {
-			"address": "c61f695fe4f80614",
-			"key": {
-				"type": "hex",
-				"signatureAlgorithm": "ECDSA_secp256k1",
-				"privateKey": "206f8f8b5c188d4bb1b7dfa7dd3d4b5445ff90ebc19029f417efd751dc9a44d9"
-			}
+			"address": "ba85020e56e96b74",
+			"key": "b85b3bf925b2cf64007f9908395ed21b6ba08b53d283c89286ff653b028176d8"
 		}
 	},
 	"deployments": {
@@ -93,15 +98,8 @@
 		},
 		"testnet": {
 			"testnet-account": [
-				"FungibleToken",
-				"FUSD",
-				"NonFungibleToken",
-				"MetadataViews",
-				"FungibleTokenMetadataViews",
-				"GToken",
-				"GovTokenPublicSale",
 				"GTokenExampleDAO",
-				"AllowList"
+				"GovTokenPublicSale"
 			]
 		}
 	}

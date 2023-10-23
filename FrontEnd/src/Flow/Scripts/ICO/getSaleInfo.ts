@@ -2,7 +2,7 @@
 
 export const getSaleInfo = () => {
   return `
-import GovTokenPublicSale from 0xc61f695fe4f80614
+import GovTokenPublicSale from 0xba85020e56e96b74
 
 
 pub struct Info {

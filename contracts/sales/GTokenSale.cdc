@@ -1,7 +1,7 @@
 import FungibleToken from 0xc61f695fe4f80614
 import NonFungibleToken from 0xc61f695fe4f80614
 import GovToken from 0xc61f695fe4f80614
-import FUSD from 0xc61f695fe4f80614
+import FiatToken from 0xa4f61a30f7716c6f
 
 
 pub contract GTokenPublicSale {

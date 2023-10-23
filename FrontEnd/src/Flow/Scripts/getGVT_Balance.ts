@@ -2,7 +2,7 @@
 
 export const getUserBalance = () => {
   return `
-import GToken from 0xc61f695fe4f80614
+import GToken from 0xba85020e56e96b74
 import FungibleToken from 0xc61f695fe4f80614
 
 pub fun main(account: Address): UFix64 {

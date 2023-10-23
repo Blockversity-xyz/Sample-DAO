@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getFUSD, getSaleInfo, purchaseBVT } from "../Flow/ICOActions";
 import { useNavigate } from "react-router-dom";
-import { set } from "date-fns";
 
 const PurchaseToken: React.FC = () => {
     const [fromToken, setFromToken] = useState("");
@@ -48,7 +47,7 @@ const PurchaseToken: React.FC = () => {
                 <div className="flex flex-col w-full max-w-md">
                     <div className="flex items-center justify-between mb-4">
                         <label htmlFor="fromToken" className="text-gray-600 mr-2">
-                            Value in FUSD
+                            Value in FiatToken (USDC)
                         </label>
                         <input
                             type="string"
@@ -76,7 +75,7 @@ const PurchaseToken: React.FC = () => {
                 </div>
                 <p className="text-center mt-10">
                     Add the governance token to your wallet so that you can vote or create proposals.
-                    You do this by swapping FUSD to GVT.
+                    You do this by swapping USDC to GVT.
                 </p>
             </div>
         </div>

@@ -1,6 +1,6 @@
 export const unPause = () => {
   return `
-import GovTokenPublicSale from 0xc61f695fe4f80614
+import GovTokenPublicSale from 0xba85020e56e96b74
 
 transaction() {
 
@@ -8,7 +8,7 @@ transaction() {
 
     prepare(account: AuthAccount) {
 
-        self.adminRef = account.borrow<&GovTokenPublicSale.Admin>(from: GovTokenPublicSale.SaleAdminStoragePath)
+        self.adminRef = account.borrow<&GovTokenPublicSale.Admin>(from: /storage/DemoGovTokenPublicSaleAdmin)
 			?? panic("Could not borrow reference to the admin!")
     }
 

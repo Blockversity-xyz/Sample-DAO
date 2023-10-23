@@ -38,6 +38,7 @@ import { setTokenAdmin as setAdmin } from "./Transactions/ICO/setTokenAdmin";
 import { newMinter as newMinterGVT } from "./Transactions/ICO/Admin/newMinter";
 import { burnTokens as burn } from "./Transactions/ICO/Admin/burnTokens";
 import { setup_fusd as setup_f } from "./Transactions/ICO/setup_fusd";
+import { setup_USDC as vault_usdc } from "./Transactions/ICO/setup_USDC";
 import { addAdmin as setAddAdmin } from "./Transactions/ICO/Admin/LaunchICO/addAdmin";
 import { launchToken as launchTokenScript } from "./Transactions/ICO/Admin/LaunchICO/launchToken";
 import { getFUSD as getFUSDScript } from "./Transactions/ICO/test/getFUSD";
@@ -48,11 +49,9 @@ import { contractCode } from "./Transactions/ICO/contractCode";
 
 export function replaceICOWithProperValues(
   tokenName: string,
-  contractAddress: string
 ) {
   return contractCode()
-    .replace('"../GovernanceToken.cdc"', contractAddress)
-    .replaceAll("GovernanceToken", tokenName);
+    .replaceAll("FiatToken", tokenName);
 }
 
 // // ****** Transactions Functions ****** //
@@ -217,11 +216,8 @@ export const setTokenAdmin = async () => {
 };
 // Deploy an ICO contract from the Admin board
 export const deployICO = async (
-  price: string,
-  tokenAddress: string,
-  tokenName: string
 ) => {
-  const ICOCode = replaceICOWithProperValues(tokenName, tokenAddress);
+  const ICOCode = contractCode();
   const hexCode = Buffer.from(ICOCode).toString("hex");
   return new Promise(async (resolve, reject) => {
     try {
@@ -231,12 +227,68 @@ export const deployICO = async (
         payer: fcl.currentUser,
         authorizations: [fcl.currentUser],
         args: (arg: any, t: any) => [
-          arg("ExamplePublicSale", t.String),
-          arg(price, t.UFix64),
-          // Contract Code
-          arg(hexCode, t.String),
+          arg("FiatToken", t.String), // contractName
+          arg(hexCode, t.String), // code
+          arg({ domain: "storage", identifier: "FVaultStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "FVaultBalancePubPath" }, t.Path),
+          arg({ domain: "public", identifier: "FVaultUUIDPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "FVaultReceiverPubPath" }, t.Path),
+          arg({ domain: "storage", identifier: "BlocklistExecutorStoragePath" }, t.Path),
+          arg({ domain: "storage", identifier: "BlocklisterStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "BlocklisterCapReceiverPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "BlocklisterUUIDPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "BlocklisterPubSigner" }, t.Path),
+          arg({ domain: "storage", identifier: "PauseExecutorStoragePath" }, t.Path),
+          arg({ domain: "storage", identifier: "PauserStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "PauserCapReceiverPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "PauserUUIDPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "PauserPubSigner" }, t.Path),
+          arg({ domain: "storage", identifier: "AdminExecutorStoragePath" }, t.Path),
+          arg({ domain: "storage", identifier: "AdminStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "AdminCapReceiverPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "AdminUUIDPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "AdminPubSigner" }, t.Path),
+          arg({ domain: "storage", identifier: "OwnerExecutorStoragePath" }, t.Path),
+          arg({ domain: "storage", identifier: "OwnerStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "OwnerCapReceiverPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "OwnerUUIDPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "OwnerPubSigner" }, t.Path),
+          arg({ domain: "storage", identifier: "MasterMinterExecutorStoragePath" }, t.Path),
+          arg({ domain: "storage", identifier: "MasterMinterStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "MasterMinterCapReceiverPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "MasterMinterPubSigner" }, t.Path),
+          arg({ domain: "public", identifier: "MasterMinterUUIDPubPath" }, t.Path),
+          arg({ domain: "storage", identifier: "MinterControllerStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "MinterControllerUUIDPubPath" }, t.Path),
+          arg({ domain: "public", identifier: "MinterControllerPubSigner" }, t.Path),
+          arg({ domain: "storage", identifier: "MinterStoragePath" }, t.Path),
+          arg({ domain: "public", identifier: "MinterUUIDPubPath" }, t.Path),
+          arg({ domain: "private", identifier: "initialAdminCapabilityPrivPath" }, t.Path),
+          arg({ domain: "private", identifier: "initialOwnerCapabilityPrivPath" }, t.Path),
+          arg({ domain: "private", identifier: "initialMasterMinterCapabilityPrivPath" }, t.Path),
+          arg({ domain: "private", identifier: "initialPauserCapabilityPrivPath" }, t.Path),
+          arg({ domain: "private", identifier: "initialBlocklisterCapabilityPrivPath" }, t.Path),
+          arg("Usdc", t.String), // tokenName
+          arg("1.0", t.String), // version
+          arg("1000000000.0", t.UFix64), // initTotalSupply
+          arg(false, t.Bool), // initPaused
+          arg(["648f9a2fbce3390bf5aeb6eaefd15ac93c81c11d845fef94e25d81789080f3ef2390f1c03651d48228f5d6509a1d7cde8e7d9606c26cc37985078e8234abb349"], t.Array(t.String)), // ownerAccountPubKeys
+          arg(["2.0"], t.Array(t.UFix64)), // ownerAccountKeyWeights
+          arg([2], t.Array(t.UInt8)), // ownerAccountKeyAlgos
+          arg(["648f9a2fbce3390bf5aeb6eaefd15ac93c81c11d845fef94e25d81789080f3ef2390f1c03651d48228f5d6509a1d7cde8e7d9606c26cc37985078e8234abb349"], t.Array(t.String)), // adminAccountPubKeys
+          arg(["2.0"], t.Array(t.UFix64)), // adminAccountKeyWeights
+          arg([2], t.Array(t.UInt8)), // adminAccountKeyAlgos
+          arg(["648f9a2fbce3390bf5aeb6eaefd15ac93c81c11d845fef94e25d81789080f3ef2390f1c03651d48228f5d6509a1d7cde8e7d9606c26cc37985078e8234abb349"], t.Array(t.String)), // masterMinterAccountPubKeys
+          arg(["2.0"], t.Array(t.UFix64)), // masterMinterAccountKeyWeights
+          arg([2], t.Array(t.UInt8)), // masterMinterAccountKeyAlgos
+          arg(["648f9a2fbce3390bf5aeb6eaefd15ac93c81c11d845fef94e25d81789080f3ef2390f1c03651d48228f5d6509a1d7cde8e7d9606c26cc37985078e8234abb349"], t.Array(t.String)), // masterMinterAccountPubKeys
+          arg(["2.0"], t.Array(t.UFix64)), // masterMinterAccountKeyWeights
+          arg([2], t.Array(t.UInt8)), // masterMinterAccountKeyAlgos
+          arg(["648f9a2fbce3390bf5aeb6eaefd15ac93c81c11d845fef94e25d81789080f3ef2390f1c03651d48228f5d6509a1d7cde8e7d9606c26cc37985078e8234abb349"], t.Array(t.String)), // masterMinterAccountPubKeys
+          arg(["2.0"], t.Array(t.UFix64)), // masterMinterAccountKeyWeights
+          arg([2], t.Array(t.UInt8)), // masterMinterAccountKeyAlgos
         ],
-        limit: 500,
+        limit: 1000,
       });
       const transaction = await fcl.tx(transactionId).onceSealed();
       console.log(transaction); // The transactions status and events after being sealed
@@ -286,6 +338,31 @@ export const setup_fusd = async () => {
     }
   });
 };
+
+export const setup_USDC = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: vault_usdc(),
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        authorizations: [fcl.currentUser],
+        args: (arg: any, t: any) => [
+          arg(["648f9a2fbce3390bf5aeb6eaefd15ac93c81c11d845fef94e25d81789080f3ef2390f1c03651d48228f5d6509a1d7cde8e7d9606c26cc37985078e8234abb349"], t.Array(t.String)), // multiSigPubKeys
+          arg(["2.0"], t.Array(t.UFix64)), // multiSigKeyWeights
+          arg([2], t.Array(t.UInt8)), // multiSigAlgos
+        ],
+        limit: 500,
+      });
+      const transaction = await fcl.tx(transactionId).onceSealed();
+      console.log(transaction); // The transactions status and events after being sealed
+    } catch (e) {
+      console.log(e);
+      reject(false);
+    }
+  });
+};
+
 
 // Purchase BVT as a user
 export const purchaseBVT = async (amount: string) => {

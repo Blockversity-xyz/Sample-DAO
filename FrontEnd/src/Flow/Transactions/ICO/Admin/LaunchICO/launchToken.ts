@@ -1,11 +1,11 @@
 export const launchToken = () => {
   return `
-import GovTokenPublicSale from 0xc61f695fe4f80614
+import GovTokenPublicSale from 0xba85020e56e96b74
 
 
 transaction (name : String, symbol : String, minCap: UFix64, maxCap: UFix64 ,  start:UFix64, end :UFix64, price: UFix64, goal: UFix64 , lockup: UFix64, ) {
     prepare(acct: AuthAccount) {
-        let adminRef = acct.borrow<&GovTokenPublicSale.Admin>(from: /storage/GovTokenPublicSaleAdmin)
+        let adminRef = acct.borrow<&GovTokenPublicSale.Admin>(from: /storage/DemoGovTokenPublicSaleAdmin)
             ?? panic("Could not borrow reference to the Admin contract")
 
         adminRef.setTokenName(name: name,  addr: acct.address)

@@ -21,13 +21,14 @@ transaction {
 
   execute {
     // Get the recipient's public account object
-    let recipient = getAccount(0x51bf9d7ebcb0c39d)
+    let recipient = getAccount(0xefc635b0bc7c771a)
 
     // Get the recipient's Receiver reference to their Vault
+    // This is the interface that lets them receive tokens sent to them
     // by borrowing the reference from the public capability
     let receiverRef = recipient.getCapability(/public/fusdReceiver)
                       .borrow<&FUSD.Vault{FungibleToken.Receiver}>()
-                      ?? panic("Could not borrow a reference to the receiver")
+                      ?? panic("Could not borrow a reference to the receiver vault")
 
     // Deposit your tokens to their Vault
     receiverRef.deposit(from: <-self.temporaryVault)

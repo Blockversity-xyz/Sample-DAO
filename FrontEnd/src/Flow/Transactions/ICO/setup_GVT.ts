@@ -2,15 +2,43 @@ export const setup_GVT = () => {
   return `
 import FungibleToken from 0xc61f695fe4f80614
 import NonFungibleToken from 0xc61f695fe4f80614
-import GToken from 0xc61f695fe4f80614
 import MetadataViews from 0xc61f695fe4f80614
-import FUSD from 0xc61f695fe4f80614
-import GTokenExampleDAO from 0xc61f695fe4f80614
-import GovTokenPublicSale from 0xc61f695fe4f80614
+import GToken from 0xba85020e56e96b74
+
+import FiatToken from 0xa4f61a30f7716c6f
+import GTokenExampleDAO from 0xba85020e56e96b74
+import GovTokenPublicSale from 0xba85020e56e96b74
 
 transaction () {
 
     prepare(signer: AuthAccount) {
+
+        //-----------------------------FUSD Setup--------------------------------
+
+        // It's OK if the account already has a Vault, but we don't want to replace it
+        if(signer.borrow<&FUSD.Vault>(from: /storage/FVaultStoragePath) != nil) {
+            log("FUSD Vault already exists in account")
+            return
+        }
+
+        // Create a new FUSD Vault and put it in storage
+        signer.save(<-FUSD.createEmptyVault(), to: /storage/FVaultStoragePath)
+
+        // Create a public capability to the Vault that only exposes
+        // the deposit function through the Receiver interface
+        signer.link<&FUSD.Vault{FungibleToken.Receiver}>(
+            /public/FVaultReceiverPubPath,
+            target: /storage/FVaultStoragePath
+        )
+
+        // Create a public capability to the Vault that only exposes
+        // the balance field through the Balance interface
+        signer.link<&FUSD.Vault{FungibleToken.Balance}>(
+            /public/FVaultBalancePubPath,
+            target: /storage/FVaultStoragePath
+        )
+
+                        //-----------------------------GToken Setup--------------------------------
 
         // Return early if the account already stores a GToken Vault
         if signer.borrow<&GToken.Vault>(from: GToken.VaultStoragePath) != nil {
@@ -34,31 +62,6 @@ transaction () {
         signer.link<&GToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
             GToken.VaultPublicPath,
             target: GToken.VaultStoragePath
-        )
-
-        //-----------------------------FUSD Setup--------------------------------
-
-                // It's OK if the account already has a Vault, but we don't want to replace it
-        if(signer.borrow<&FUSD.Vault>(from: /storage/FUSDVault) != nil) {
-            log("FUSD Vault already exists in account")
-            return
-        }
-
-        // Create a new FUSD Vault and put it in storage
-        signer.save(<-FUSD.createEmptyVault(), to: /storage/FUSDVault)
-
-        // Create a public capability to the Vault that only exposes
-        // the deposit function through the Receiver interface
-        signer.link<&FUSD.Vault{FungibleToken.Receiver}>(
-            /public/fusdReceiver,
-            target: /storage/FUSDVault
-        )
-
-        // Create a public capability to the Vault that only exposes
-        // the balance field through the Balance interface
-        signer.link<&FUSD.Vault{FungibleToken.Balance}>(
-            /public/fusdBalance,
-            target: /storage/FUSDVault
         )
 
 
