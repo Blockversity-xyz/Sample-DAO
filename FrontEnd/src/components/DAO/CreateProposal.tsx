@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { createProposal } from "../../Flow/GovernanceActions";
 import { useNavigate } from "react-router-dom";
 
@@ -15,13 +15,19 @@ interface Props {
   ) => void;
 }
 
+/**
+ * Component for creating a proposal.
+ * @param {Props} onSubmit - Function to handle form submission.
+ * @returns {JSX.Element} - JSX element containing the form for creating a proposal.
+ */
+
 export default function CreateProposal({ onSubmit }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [options, setOptions] = useState<string[]>(["", ""]);
   const [startAt, setStartAt] = useState(new Date());
   const [endAt, setEndAt] = useState(new Date());
-  const [minHoldedGVTAmount, setMinHoldedGVTAmount] = useState(10.0);
+  const [minHoldedGVTAmount] = useState(10.0);
   const navigate = useNavigate();
 
 

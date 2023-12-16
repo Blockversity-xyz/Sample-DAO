@@ -1,3 +1,7 @@
+/**
+ * The main component of the application.
+ * Renders the Sidebar and the content based on the current route.
+ */
 /** @format */
 
 import React from "react";

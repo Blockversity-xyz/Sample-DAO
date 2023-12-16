@@ -6,16 +6,6 @@ import ICO from "./ICO";
 import Tokennomics from "./Tokenomics";
 import PurchaserList from "./PurchaserList";
 
-type Tokenomics = {
-  name: string;
-  symbol: string;
-  address: string;
-  price: number;
-  maxSupply: number;
-  initialSupply: number;
-};
-
-
 
 
 const AdminDashboard: React.FC = () => {

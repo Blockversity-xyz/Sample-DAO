@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getFUSD, getSaleInfo, purchaseBVT } from "../Flow/ICOActions";
+import { getSaleInfo, purchaseBVT } from "../Flow/ICOActions";
 import { useNavigate } from "react-router-dom";
 
 const PurchaseToken: React.FC = () => {
     const [fromToken, setFromToken] = useState("");
-    const [toToken, setToToken] = useState("");
-    const [amount, setAmount] = useState("");
     let navigate = useNavigate();
 
     const [tokenInfo, setTokenInfo] = useState<any>({});

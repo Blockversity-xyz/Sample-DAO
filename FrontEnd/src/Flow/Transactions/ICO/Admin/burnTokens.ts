@@ -1,3 +1,7 @@
+/**
+ * This function exports a transaction script that burns tokens.
+ * @returns The transaction script for burning tokens.
+ */
 export const burnTokens = () => {
     return `
 import FungibleToken from 0xc61f695fe4f80614

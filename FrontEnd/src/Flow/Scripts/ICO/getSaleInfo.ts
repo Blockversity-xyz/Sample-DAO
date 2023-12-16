@@ -1,5 +1,9 @@
 /** @format */
 
+/**
+ * Returns the sale information of the GovTokenPublicSale contract.
+ * @returns {string} The sale information of the GovTokenPublicSale contract.
+ */
 export const getSaleInfo = () => {
   return `
 import GovTokenPublicSale from 0xba85020e56e96b74

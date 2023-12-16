@@ -18,7 +18,6 @@ const CreateTokenForm = () => {
 
 
     useEffect(() => {
-        // Simulating API call to fetch the maxSupply value
         fetchTokenData().then((data) => {
             setFormData((prevFormData) => ({
                 ...prevFormData,

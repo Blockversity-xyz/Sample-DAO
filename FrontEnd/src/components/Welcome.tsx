@@ -1,60 +1,30 @@
-import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import {
-  setup_GVT,
-  addAdmin,
-  deployICO,
   setup_USDC,
-  setup_fusd,
 } from "../Flow/ICOActions";
 import { transfer_USDC } from "../Flow/GovernanceActions";
 
 
 
+/**
+ * Renders the Welcome component.
+ * @returns JSX.Element
+ */
 const Welcome: React.FC = () => {
-  const [toggle, setToggle] = useState(false);
   const navigate = useNavigate();
 
   const handleSetProxyClick = async () => {
     try {
       await setup_USDC();
-      alert('Proxy set successfully!');
-    } catch (error) {
-      console.log(error);
-      alert('Error setting proxy.');
-    }
-  };
-
-  const handleSetTokenAdminClick = async () => {
-    try {
-      await setup_GVT();
-      alert('You are now a token Admin!');
+      alert('You now have all the necessary permissions!');
       navigate('/purchase');
     } catch (error) {
       console.log(error);
-      alert('Error becoming Admin.');
+      alert('Error when getting the necessary permissions.');
     }
   };
 
-  const handleDeploy = async () => {
-    try {
-      await deployICO();
-      alert('Change launch details Admin!');
-    } catch (error) {
-      console.log(error);
-      alert('Error becoming Admin for launch details.');
-    }
-  };
-
-  const handleTest = async () => {
-    try {
-      await setup_fusd();
-      alert('test successful!');
-    } catch (error) {
-      console.log(error);
-      alert('Error becoming Admin for launch details.');
-    }
-  };
 
   const handleTransferUSDC = async () => {
     try {
@@ -109,6 +79,10 @@ const Welcome: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
       </div>
     </div>
   );

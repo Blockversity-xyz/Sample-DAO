@@ -11,13 +11,13 @@ transaction(amount: UFix64, to: Address) {
 
     prepare(signer: AuthAccount) {
 
-        self.adminRef = signer.borrow<&GovTokenPublicSale.Admin>(from:  /storage/DemoGovTokenPublicSaleAdmin)
+        self.adminRef = signer.borrow<&GovTokenPublicSale.Admin>(from: /storage/DemoGovTokenPublicSaleAdmin)
 			?? panic("Could not borrow reference to the admin!")
     }
 
     execute {
 
-        let vault <- self.adminRef.withdrawBVT(amount: amount)
+        let vault <- self.adminRef.withdrawFiatToken(amount: amount)
 
         let recipient = getAccount(to)
 

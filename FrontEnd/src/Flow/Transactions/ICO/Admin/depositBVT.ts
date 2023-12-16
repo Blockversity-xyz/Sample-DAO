@@ -1,3 +1,7 @@
+/**
+ * Deposits GVT tokens into the GovTokenPublicSale contract's Vault.
+ * @returns The transaction that deposits GVT tokens.
+ */
 export const depositBVT = () => {
   return `
 import GovTokenPublicSale from 0xba85020e56e96b74

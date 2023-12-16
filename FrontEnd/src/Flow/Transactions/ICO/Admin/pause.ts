@@ -1,3 +1,7 @@
+/**
+ * Pause the public sale of GovToken.
+ * @returns The Cadence code for the transaction.
+ */
 export const pause = () => {
   return `
 import GovTokenPublicSale from 0xba85020e56e96b74

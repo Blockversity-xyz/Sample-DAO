@@ -51,7 +51,7 @@ export default function SellTokensForm() {
 
             let launch = launchToken(formData.tockenName, formData.tokenSymbol, formData.minCap.toFixed(2), formData.maxCap.toFixed(2), start, end, formData.tokenPrice.toFixed(6), formData.minimumGoal.toFixed(2), formData.lockup.toFixed(2));
             console.log(launch);
-            alert('Token Launched! successfully!');
+            
         } catch (error) {
             console.log(error);
             alert('Error setting proxy.');

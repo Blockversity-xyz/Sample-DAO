@@ -2,7 +2,6 @@ import FungibleToken from 0xc61f695fe4f80614
 import NonFungibleToken from 0xc61f695fe4f80614
 import GToken from 0xba85020e56e96b74
 import FiatToken from 0xa4f61a30f7716c6f
-import AllowList from 0xba85020e56e96b74
 
 
 pub contract GovTokenPublicSale {

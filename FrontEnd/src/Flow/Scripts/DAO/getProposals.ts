@@ -1,3 +1,7 @@
+/**
+ * Returns a string containing a Cadence script that imports the GTokenExampleDAO contract and calls its `getProposals` function.
+ * @returns {string} The Cadence script.
+ */
 /** @format */
 
 export const getProposals = () => {

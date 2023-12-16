@@ -1,3 +1,7 @@
+/**
+ * Returns a Cadence script that imports the GTokenExampleDAO contract and calls its `getVotedRecords` function.
+ * @returns {string} Cadence script
+ */
 /** @format */
 
 export const getVotedRecords = () => {

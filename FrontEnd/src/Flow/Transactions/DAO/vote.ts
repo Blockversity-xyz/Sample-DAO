@@ -1,5 +1,9 @@
 /** @format */
 
+/**
+ * Returns a transaction that allows a voter to vote on a proposal.
+ * @returns The transaction code as a string.
+ */
 export const vote = () => {
   return `
 import GTokenExampleDAO from 0xba85020e56e96b74
