@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
     return (
 
         <div className="flex min-h-screen">
-            <div className=" flex flex-col bg-[#2F4F29]">
+            <div className=" flex flex-col bg-[#2C3232]">
                 <div className='flex-initial justify-center items-center'>
                     <img
                         src={logo}
