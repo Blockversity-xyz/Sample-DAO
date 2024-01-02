@@ -60,7 +60,7 @@ const Welcome: React.FC = () => {
             </button>
           </div>
 
-
+{/* 
           <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
             <button
               className='bg-green-500 text-white rounded-md py-2 px-4'
@@ -68,7 +68,7 @@ const Welcome: React.FC = () => {
             >
               Test Set Up Storage
             </button>
-          </div>
+          </div> */}
 
           <div className='flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10'>
             <button
@@ -83,9 +83,4 @@ const Welcome: React.FC = () => {
     </div>
   );
 };
-      </div>
-    </div>
-  );
-};
-
 export default Welcome;
