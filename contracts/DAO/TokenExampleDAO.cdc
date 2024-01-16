@@ -83,20 +83,6 @@ pub contract TokenExampleDAO {
      }
 
 
-    // ProposerProxy
-    //
-    // Resource object holding a capability that can be used to create new proposals.
-    // The resource that this capability represents can be deleted by the admin
-    // in order to unilaterally revoke proposer capability if needed.
-
-    // createProposerProxy
-    //
-    // Function that creates a ProposerProxy.
-    // Anyone can call this, but the ProposerProxy cannot
-    // create proposals without a Proposer capability,
-    // and only the admin can provide that.
-    //
-
   pub resource interface VoterPublic {
     // voted Proposal id <-> options index mapping
     pub fun getVotedOption(ProposalId: UInt64): Int?
